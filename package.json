@@ -1,0 +1,13 @@
+{
+  "name": "chesterfield_express",
+  "description": "Personal Test App",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "express": "3.x",
+    "mongoose": "3.x",
+    "swig": "1.x",
+    "mocha": "1.x",
+    "chai": "1.x"
+  }
+}
