@@ -20,6 +20,8 @@ swig.setDefaults({ cache: false });
 // Logger
 if (!module.parent) app.use(logger('dev'));
 
+require('./lib/boot')(app, { verbose: !module.parent });
+
 var server = app.listen(3000, function() {
   console.log('Listening on port %d', server.address().port);
 });
