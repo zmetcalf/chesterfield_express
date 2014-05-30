@@ -5,8 +5,7 @@ var express = require('express'),
   bodyParser = require('body-parser'),
   methodOverride = require('method-override'),
   swig = require('swig'),
-  path = require('path'),
-  _ = require('underscore');
+  path = require('path');
 
 var app = module.exports = express();
 
@@ -56,20 +55,23 @@ app.use(methodOverride());
 
 // expose the "messages" local variable when views are rendered
 app.use(function(req, res, next){
+  var err = req.session.error;
+  var success = req.session.success;
   var msgs = req.session.messages || [];
+
+  // Login session handling
+  delete req.session.error;
+  delete req.session.success;
+  res.locals.message = '';
+
+  if (err) res.locals.message = '<p class="msg error">' + err + '</p>';
+  if (success) res.locals.message = '<p class="msg success">' + success + '</p>';
 
   // expose "messages" local variable
   res.locals.messages = msgs;
 
   // expose "hasMessages"
   res.locals.hasMessages = !! msgs.length;
-
-  /* This is equivalent:
-   res.locals({
-     messages: msgs,
-     hasMessages: !! msgs.length
-   });
-  */
 
   next();
   // empty or "flush" the messages so they
@@ -79,6 +81,12 @@ app.use(function(req, res, next){
 
 // load controllers
 require('./lib/boot')(app, { verbose: !module.parent });
+
+// Additional Routes
+var login = require('./lib/login/index');
+app.get('/login', login.load_login);
+app.post('/login', login.authenticate);
+app.get('/logout', login.logout);
 
 // assume "not found" in the error msgs
 // is a 404. this is somewhat silly, but

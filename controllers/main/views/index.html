@@ -1,1 +1,14 @@
 {% extends 'base.html' %}
+
+{% block content_heading %}{{ content_heading }}{% endblock %}
+
+{% block content %}{{ content }}{% endblock %}
+
+{% block call_to_action %}
+  {% if call_to_action %}
+    <p class="lead">
+      <a href="{{ call_to_action['link'] }}"
+        class="btn btn-lg btn-default">{{ call_to_action['name'] }}</a>
+    </p>
+  {% endif %}
+{% endblock %}
