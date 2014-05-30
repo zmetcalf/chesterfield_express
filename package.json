@@ -7,13 +7,16 @@
     "express": "3.x",
     "mongoose": "3.x",
     "swig": "1.x",
-    "mocha": "1.x",
-    "chai": "1.x",
     "morgan": "1.x",
     "underscore": "1.x",
     "express-session": "1.x",
     "cookie-parser": "1.x",
     "body-parser": "1.x",
-    "method-override": "1.x",
+    "method-override": "1.x"
+  },
+
+  "devDependencies": {
+    "mocha": "1.x",
+    "chai": "1.x"
   }
 }

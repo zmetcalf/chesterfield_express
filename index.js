@@ -19,7 +19,10 @@ app.set('views', path.join(__dirname, 'app/views'));
 app.set('view cache', false);
 
 // Change to true for production
-swig.setDefaults({ cache: false });
+swig.setDefaults({
+  cache: false,
+  loader: swig.loaders.fs(__dirname + '/views')
+});
 
 // set views for error and 404 pages
 app.set('views', __dirname + '/views');
