@@ -13,7 +13,6 @@ var app = module.exports = express();
 app.engine('html', swig.renderFile);
 
 app.set('view engine', 'html');
-app.set('views', path.join(__dirname, 'app/views'));
 
 app.set('view cache', false);
 
@@ -25,6 +24,9 @@ swig.setDefaults({
 
 // set views for error and 404 pages
 app.set('views', __dirname + '/views');
+
+// setup db
+var db = require('./db');
 
 // define a custom res.message() method
 // which stores messages in the session
