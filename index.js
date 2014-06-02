@@ -85,7 +85,7 @@ app.use(function(req, res, next){
 require('./lib/boot')(app, { verbose: !module.parent });
 
 // Additional Routes
-var login = require('./lib/login/index');
+var login = require('./lib/auth');
 app.get('/login', login.load_login);
 app.post('/login', login.authenticate);
 app.get('/logout', login.logout);
@@ -111,6 +111,7 @@ app.use(function(req, res, next){
 });
 
 if (!module.parent) {
-  app.listen(3000);
-  console.log('\n  listening on port 3000\n');
+  var server = app.listen(3000, function() {
+    console.log('\nListening on port %d\n', server.address().port);
+  });
 }
