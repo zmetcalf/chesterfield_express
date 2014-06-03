@@ -1,5 +1,5 @@
 exports.before = function(req, res, next) {
-  if (req.session.user.is_staff) {
+  if (req.session.user && req.session.user.is_staff) {
     next();
   } else {
     req.session.error = 'Access denied!';

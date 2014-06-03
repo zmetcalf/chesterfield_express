@@ -1,1 +1,28 @@
 {% extends 'dashboard.html' %}
+
+{% block page_header %}Users{% endblock %}
+
+{% block content %}
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Last Name</th>
+          <th>First Name</th>
+          <th>Username</th>
+          <th>Staff</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+        <tr>
+          <td><a href="/user/{{ user.username }}">{{ user.last_name }}</a></td>
+          <td><a href="/user/{{ user.username }}">{{ user.first_name }}</a></td>
+          <td><a href="/user/{{ user.username }}">{{ user.username }}</a></td>
+          <td><a href="/user/{{ user.username }}">{% if user.is_staff %}Yes{% else %}No{% endif %}</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock content %}
