@@ -4,6 +4,7 @@ var express = require('express'),
   cookieParser = require('cookie-parser'),
   bodyParser = require('body-parser'),
   methodOverride = require('method-override'),
+  mongoose = require('mongoose'),
   swig = require('swig'),
   path = require('path');
 
@@ -26,7 +27,11 @@ swig.setDefaults({
 app.set('views', __dirname + '/views');
 
 // setup db
-var db = require('./db');
+var db_opts = require('./config/db');
+
+mongoose.connect('mongodb://localhost/' + db_opts.db_name, db_opts.options);
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'db connection error:'));
 
 // define a custom res.message() method
 // which stores messages in the session

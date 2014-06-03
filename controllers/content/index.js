@@ -8,5 +8,5 @@ exports.before = function(req, res, next) {
 }
 
 exports.list = function(req, res, next) {
-  res.render('index');
+  res.render('list');
 }
