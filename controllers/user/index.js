@@ -28,7 +28,10 @@ exports.list = function(req, res, next) {
 }
 
 exports.edit = function(req, res, next) {
-  res.render('edit', { user: req.user });
+  res.render('edit', {
+    user: req.user,
+    csrf_token: req.csrfToken()
+  });
 }
 
 exports.show = function(req, res, next) {
@@ -36,6 +39,6 @@ exports.show = function(req, res, next) {
 }
 
 exports.update = function(req, res, next) {
-  res.messag('Information updated!');
-  res.redirect('/user/' + req.user.id);
+  res.message('Information updated!');
+  res.redirect('/user/' + req.user.username);
 }

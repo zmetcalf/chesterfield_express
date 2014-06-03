@@ -11,8 +11,9 @@
     "express-session": "1.x",
     "cookie-parser": "1.x",
     "body-parser": "1.x",
-    "method-override": "1.x",
-    "pwd": "0.x"
+    "method-override": "2.x",
+    "pwd": "0.x",
+    "csurf": "1.x"
   },
 
   "devDependencies": {

@@ -3,6 +3,12 @@
 {% block page_header %}Edit {{ user.first_name }} {{ user.last_name }}{% endblock %}
 
 {% block content %}
+  <form role="form" action="/user/{{ user.username }}?_method=put" method="post">
+    <input type="hidden" name="_csrf" value="{{ csrf_token }}">
+      <div class="form-group">
 
-  <a href='/user/{{ user.username}}/' class='btn btn-primary' role="button">Edit User</a>
+      </div>
+
+    <button class='btn btn-primary' type="submit">Edit User</a>
+  </form>
 {% endblock %}

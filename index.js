@@ -3,6 +3,7 @@ var express = require('express'),
   session = require('express-session'),
   cookieParser = require('cookie-parser'),
   bodyParser = require('body-parser'),
+  csrf = require('csurf'),
   methodOverride = require('method-override'),
   mongoose = require('mongoose'),
   swig = require('swig'),
@@ -58,7 +59,10 @@ app.use(session());
 app.use(bodyParser());
 
 // override methods (put, delete)
-app.use(methodOverride());
+app.use(methodOverride('_method'));
+
+// Initialize CSRF
+app.use(csrf());
 
 // expose the "messages" local variable when views are rendered
 app.use(function(req, res, next){
