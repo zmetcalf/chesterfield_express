@@ -5,10 +5,7 @@
 {% block content %}
   <form role="form" action="/user/{{ user.username }}?_method=put" method="post">
     <input type="hidden" name="_csrf" value="{{ csrf_token }}">
-      <div class="form-group">
-
-      </div>
-
+      {% autoescape false %}{{ form }}{% endautoescape %}
     <button class='btn btn-primary' type="submit">Edit User</a>
   </form>
 {% endblock %}
