@@ -13,7 +13,8 @@
     "body-parser": "1.x",
     "method-override": "2.x",
     "pwd": "0.x",
-    "csurf": "1.x"
+    "csurf": "1.x",
+    "connect-mongo": "0.x"
   },
 
   "devDependencies": {

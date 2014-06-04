@@ -6,8 +6,10 @@ var express = require('express'),
   csrf = require('csurf'),
   methodOverride = require('method-override'),
   mongoose = require('mongoose'),
+  MongoStore = require('connect-mongo')(session),
   swig = require('swig'),
-  path = require('path');
+  path = require('path'),
+  secret_key = require('config/site').secret_key;
 
 var app = module.exports = express();
 
@@ -52,8 +54,14 @@ if (!module.parent) app.use(logger('dev'));
 app.use(express.static(__dirname + '/public'));
 
 // session support
-app.use(cookieParser('some secret here'));
-app.use(session());
+app.use(cookieParser(secret_key));
+app.use(session({
+  secret: secret_key,
+  store: new MongoStore({
+    url: 'mongodb://' + db_opts.options.user + ':' + db_opts.options.pass +
+         '@localhost:27017/' + db_opts.db_name + '/sessions'
+  }),
+}));
 
 // parse request bodies (req.body)
 app.use(bodyParser());
