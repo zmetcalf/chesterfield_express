@@ -1,0 +1,11 @@
+{% extends 'dashboard.html' %}
+
+{% block page_header %}New User{% endblock %}
+
+{% block content %}
+  <form role="form" action="/user" method="post">
+    <input type="hidden" name="_csrf" value="{{ csrf_token }}">
+      {% autoescape false %}{{ form }}{% endautoescape %}
+    <button class='btn btn-primary' type="submit">Create User</a>
+  </form>
+{% endblock %}
