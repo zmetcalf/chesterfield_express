@@ -96,7 +96,7 @@ exports.add = function(req, res, next) {
 
     error: function(form) {
       res.render('create', {
-        form: create_form.toHTML(bootstrap_field),
+        form: form.toHTML(bootstrap_field),
         csrf_token: req.csrfToken()
       });
     },
@@ -172,7 +172,7 @@ function unique_user(form, field, callback) {
   model.User.find({}, 'username', function(err, users) {
     if (err) return console.log(err);
 
-    if(!!_.find(users, function(user) { return field.data == user; })) {
+    if(_.find(users, function(user) { return field.data == user.username; })) {
       return callback('Username already taken.');
     } else {
       return callback();
@@ -181,12 +181,14 @@ function unique_user(form, field, callback) {
 }
 
 function gen_password(callback) {
-  crypto.randomBytes(10, function(err, buf) {
+  crypto.randomBytes(16, function(err, buf) {
     if(err) return console.log(err);
+
     buf.toString('base64')
     .slice(0, 10)
     .replace(/\+/g, '0')
     .replace(/\//g, '0');
-    return callback(buf);
+
+    return callback(null, buf);
   });
 }
