@@ -1,1 +1,29 @@
 {% extends 'dashboard.html' %}
+
+{% block page_header %}Content{% endblock %}
+
+{% block content %}
+  <a href='/create_content' class="btn btn-primary" role="button">Create Content</a>
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Post Date</th>
+          <th>Author</th>
+          <th>Url</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for content in contents %}
+        <tr>
+          <td><a href="/content/{{ content.url_slug }}/edit">{{ content.title }}</a></td>
+          <td>{{ content.post_date.toString() }}</td>
+          <td>{# content.author TODO - create lookup to get name #}</td>
+          <td><a href="/content/{{ content.url_slug }}">/{{ content.url_slug }}</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock content %}

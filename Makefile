@@ -1,3 +1,7 @@
 test:
 	./node_modules/.bin/mocha
-.PHONY: test
+
+bower:
+	./node_modules/.bin/bower install
+
+.PHONY: test bower

@@ -16,7 +16,8 @@
     "csurf": "1.x",
     "connect-mongo": "0.x",
     "forms": "0.x",
-    "underscore": "1.x"
+    "underscore": "1.x",
+    "bower": "1.x"
   },
 
   "devDependencies": {

@@ -32,7 +32,7 @@ exports.list = function(req, res, next) {
     function(err, users) {
       if (err) return console.log(err);
       res.render('list', { 'users': users });
-    });
+  });
 }
 
 exports.edit = function(req, res, next) {
@@ -115,11 +115,13 @@ function update_form(user) {
     first_name: fields.string({
       widget: widgets.text(),
       errorAfterField: true,
+      value: user.first_name
     }),
 
     last_name: fields.string({
       widget: widgets.text(),
       errorAfterField: true,
+      value: user.last_name
     }),
 
     is_staff: fields.boolean({
@@ -128,9 +130,7 @@ function update_form(user) {
         true: "Yes",
         false: "No"
       },
-
       errorAfterField: true,
-
       value: String(user.is_staff)
     })
   });
