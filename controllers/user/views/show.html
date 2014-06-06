@@ -11,5 +11,6 @@
       Is Authenticated User
     {% endif %}
   </h3>
+  {% autoescape false %}{{ msg }}{% endautoescape %}
   <a href='/user/{{ user.username}}/edit' class='btn btn-primary' role="button">Edit User</a>
 {% endblock %}

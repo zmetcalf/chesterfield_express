@@ -1,5 +1,5 @@
 var model = require('./models/models'),
-    crypto = require('crypto'),
+    gen_password = require('../../lib/utils').gen_password,
     hash = require('pwd').hash,
     _ = require('underscore'),
     forms = require('forms'),
@@ -44,7 +44,10 @@ exports.edit = function(req, res, next) {
 }
 
 exports.show = function(req, res, next) {
-  res.render('show', { user: req.user });
+  res.render('show', {
+    user: req.user,
+    msg: res.locals.message
+  });
 }
 
 exports.update = function(req, res, next) {
@@ -87,7 +90,7 @@ exports.add = function(req, res, next) {
             salt: _salt
           }, function(err, new_user) {
             if(err) return handleError(err);
-            res.message('New Password is: ' + password);
+            req.session.success = 'New Password is: ' + password;
             res.redirect('/user/' + req.body.username);
           });
         });
@@ -102,10 +105,7 @@ exports.add = function(req, res, next) {
     },
 
     empty: function(form) {
-      res.render('create', {
-        form: create_form.toHTML(bootstrap_field),
-        csrf_token: req.csrfToken()
-      });
+      res.redirect('/create_user');
     }
   });
 }
@@ -131,7 +131,7 @@ function update_form(user) {
 
       errorAfterField: true,
 
-      value: user.is_staff
+      value: String(user.is_staff)
     })
   });
 }
@@ -169,26 +169,12 @@ var create_form = forms.create({
 });
 
 function unique_user(form, field, callback) {
-  model.User.find({}, 'username', function(err, users) {
+  model.User.is_unique_user(field.data, function(err, is_unique) {
     if (err) return console.log(err);
-
-    if(_.find(users, function(user) { return field.data == user.username; })) {
-      return callback('Username already taken.');
-    } else {
+    if(is_unique) {
       return callback();
+    } else {
+      return callback('Username is already taken');
     }
-  });
-}
-
-function gen_password(callback) {
-  crypto.randomBytes(16, function(err, buf) {
-    if(err) return console.log(err);
-
-    buf.toString('base64')
-    .slice(0, 10)
-    .replace(/\+/g, '0')
-    .replace(/\//g, '0');
-
-    return callback(null, buf);
   });
 }

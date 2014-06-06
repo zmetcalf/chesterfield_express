@@ -3,6 +3,7 @@
 {% block page_header %}Users{% endblock %}
 
 {% block content %}
+  <a href='/create_user' class="btn btn-primary" role="button">Create User</a>
   <div class="table-responsive">
     <table class="table table-striped">
       <thead>
@@ -17,9 +18,9 @@
         {% for user in users %}
         <tr>
           <td><a href="/user/{{ user.username }}">{{ user.last_name }}</a></td>
-          <td><a href="/user/{{ user.username }}">{{ user.first_name }}</a></td>
-          <td><a href="/user/{{ user.username }}">{{ user.username }}</a></td>
-          <td><a href="/user/{{ user.username }}">{% if user.is_staff %}Yes{% else %}No{% endif %}</a></td>
+          <td>{{ user.first_name }}</td>
+          <td>{{ user.username }}</td>
+          <td>{% if user.is_staff %}Yes{% else %}No{% endif %}</td>
         </tr>
         {% endfor %}
       </tbody>
