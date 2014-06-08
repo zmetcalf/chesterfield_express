@@ -9,7 +9,7 @@ var express = require('express'),
   MongoStore = require('connect-mongo')(session),
   swig = require('swig'),
   path = require('path'),
-  secret_key = require('config/site').secret_key;
+  secret_key = require('./config/site').secret_key;
 
 var app = module.exports = express();
 
