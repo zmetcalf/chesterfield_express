@@ -54,6 +54,8 @@ exports.edit = function(req, res, next) {
     header: 'Edit Content',
     action_url: '/content/' + req.content.url_slug + '?_method=put',
     form: content_form(req.content).toHTML(bootstrap_field),
+    slug: req.content.url_slug,
+    exists: true,
     csrf_token: req.csrfToken()
   });
 }
@@ -61,6 +63,13 @@ exports.edit = function(req, res, next) {
 exports.show = function(req, res, next) {
   res.render('show', {
     content: req.content,
+  });
+}
+
+exports.delete = function(req, res, next) {
+  model.Content.findByIdAndRemove(req.content._id, function(err) {
+    if(err) return console.log(err);
+    res.redirect('/contents');
   });
 }
 
@@ -97,7 +106,7 @@ exports.update = function(req, res, next) {
   });
 }
 
-exports.create = function(req, res, next) {
+exports.add = function(req, res, next) {
   res.render('update', {
     header: 'Create Content',
     action_url: '/content',
@@ -106,7 +115,7 @@ exports.create = function(req, res, next) {
   });
 }
 
-exports.add = function(req, res, next) {
+exports.create = function(req, res, next) {
   content_form().handle(req, {
     success: function(form) {
       model.Content.create({

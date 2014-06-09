@@ -26,5 +26,12 @@
     "mocha": "1.x",
     "chai": "1.x",
     "mockgoose": "1.x"
+  },
+
+  "scripts": {
+    "postinstall": "bower install",
+
+    "pretest": "npm install",
+    "test": "mocha test"
   }
 }

@@ -50,6 +50,13 @@ exports.show = function(req, res, next) {
   });
 }
 
+exports.delete = function(req, res, next) {
+  model.User.findByIdAndRemove(req.user._id, function(err) {
+    if(err) return console.log(err);
+    res.redirect('/users');
+  });
+}
+
 exports.update = function(req, res, next) {
   update_form(req.user).handle(req, {
     success: function(form) {
@@ -82,14 +89,14 @@ exports.update = function(req, res, next) {
   });
 }
 
-exports.create = function(req, res, next) {
+exports.add = function(req, res, next) {
   res.render('create', {
     form: create_form.toHTML(bootstrap_field),
     csrf_token: req.csrfToken()
   });
 }
 
-exports.add = function(req, res, next) {
+exports.create = function(req, res, next) {
   create_form.handle(req, {
     success: function(form) {
       gen_password(function(err, password) {

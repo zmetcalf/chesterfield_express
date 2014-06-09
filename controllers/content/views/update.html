@@ -6,6 +6,13 @@
   <form role="form" action="{{ action_url }}" method="post">
     <input type="hidden" name="_csrf" value="{{ csrf_token }}">
       {% autoescape false %}{{ form }}{% endautoescape %}
-    <button class='btn btn-primary' type="submit">{{ header }}</a>
+    <button class='btn btn-primary' type="submit">{{ header }}</button>
   </form>
+  {% if exists %}
+  <br>
+  <form role="form" action="/content/{{ slug }}?_method=delete" method="post">
+    <input type="hidden" name="_csrf" value="{{ csrf_token }}">
+    <button class='btn btn-danger' type="submit">Delete Content</button>
+  </form>
+  {% endif %}
 {% endblock %}
