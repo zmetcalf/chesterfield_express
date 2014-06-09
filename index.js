@@ -117,16 +117,9 @@ app.get('/login', login.load_login);
 app.post('/login', login.authenticate);
 app.get('/logout', login.logout);
 
-// assume "not found" in the error msgs
-// is a 404. this is somewhat silly, but
-// valid, you can do whatever you like, set
-// properties, use instanceof etc.
 app.use(function(err, req, res, next){
-  // treat as 404
-  if (~err.message.indexOf('not found')) return next();
-
   // log it
-  console.error(err.stack);
+  if (!module.parent) console.error(err.stack);
 
   // error page
   res.status(500).render('5xx');

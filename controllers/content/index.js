@@ -9,14 +9,15 @@ var model = require('./models/models'),
     bootstrap_field = require('../../lib/forms').bootstrap_field;
 
 exports.before = function(req, res, next) {
-  if (req.session.user && req.session.user.is_staff) {
+  if ((req.route.path === '/content/:content_id' && req.route.method==='get') ||
+      req.session.user && req.session.user.is_staff) {
     var slug = req.params.content_id;
     if (!slug) return next();
 
     model.Content.findOne({ 'url_slug': slug }, function(err, content) {
       req.content = content;
       if (err) return console.log(err);
-      if (!content) return next(new Error('Content not found'));
+      if (!content) return next('route');
       next();
     });
   } else {

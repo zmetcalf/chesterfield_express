@@ -1,7 +1,6 @@
 var assert = require('chai').assert,
     mongoose = require('mongoose'),
-    mockgoose = require('mockgoose'),
-    user = require('../../../../controllers/user/index');
+    mockgoose = require('mockgoose');
 
 mockgoose(mongoose);
 

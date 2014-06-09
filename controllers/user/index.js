@@ -18,7 +18,7 @@ exports.before = function(req, res, next) {
       function(err, user) {
         req.user = user;
         if (err) return console.log(err);
-        if (!user) return next(new Error('User not found'));
+        if (!user) return next('route');
         next();
     });
   } else {
