@@ -4,6 +4,7 @@ var express = require('express'),
   cookieParser = require('cookie-parser'),
   bodyParser = require('body-parser'),
   csrf = require('csurf'),
+  helmet = require('helmet'),
   methodOverride = require('method-override'),
   mongoose = require('mongoose'),
   MongoStore = require('connect-mongo')(session),
@@ -52,6 +53,12 @@ if (!module.parent) app.use(logger('dev'));
 
 // serve static files
 app.use(express.static(__dirname + '/public'));
+
+// Helmet for safe headers
+app.use(helmet.csp());
+app.use(helmet.xframe('deny'));
+app.use(helmet.iexss());
+app.use(helmet.contentTypeOptions());
 
 // session support
 app.use(cookieParser(secret_key));

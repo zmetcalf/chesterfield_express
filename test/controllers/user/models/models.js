@@ -5,19 +5,6 @@ var assert = require('chai').assert,
 
 mockgoose(mongoose);
 
-describe('Generate Users', function() {
-
-  var model = require('../../../../controllers/user/models/models');
-
-  it('should create a default user', function() {
-    model.User.findOne({ 'username': 'user' }, 'username',
-      function(err, user) {
-          if(err) return console.log(err);
-          assert.equal(user.first_name, 'Test');
-    });
-  });
-});
-
 describe('Is Unique User', function() {
 
   var model = require('../../../../controllers/user/models/models');

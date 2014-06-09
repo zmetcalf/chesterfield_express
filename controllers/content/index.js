@@ -179,11 +179,16 @@ function content_form(content) {
       widget: widgets.text(),
       value: content.seo_description,
     }),
+
+    id: fields.string({
+      widget: widgets.hidden(),
+      value: content._id,
+    }),
   });
 }
 
 function unique_slug(form, field, callback) {
-  content_id = req.content._id || false;
+  content_id = form.data.id || '';
   model.Content.is_unique_slug(field.data, content_id,
     function(err, is_unique) {
       if (err) return console.log(err);

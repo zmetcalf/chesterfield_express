@@ -14,21 +14,18 @@ var cms_schema = mongoose.Schema({
 });
 
 cms_schema.statics.is_unique_slug = function(slug, content_id, callback) {
-  this.find({}, 'url_slug', function(err, contents) {
+  this.find({}, 'url_slug _id', function(err, contents) {
     if (err) return console.log(err);
 
     var fltrd = _.filter(contents, function(content) {
-        return slug == content.url_slug;
+      return slug == content.url_slug && content_id != content._id;
     });
 
-    _.each(fltrd, function(content) {
-      if(content._id != content_id) {
-        return callback(null, false);
-      } else {
-        return callback(null, true);
-      }
-
-    });
+    if (fltrd.length) {
+      return callback(null, false);
+    } else {
+      return callback(null, true);
+    }
   });
 }
 
