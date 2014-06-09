@@ -1,5 +1,7 @@
 var model = require('./models/models'),
+    user_model = require('../user/models/models'),
     _ = require('underscore'),
+    async = require('async'),
     forms = require('forms'),
     fields = forms.fields,
     validators = forms.validators,
@@ -24,10 +26,26 @@ exports.before = function(req, res, next) {
 }
 
 exports.list = function(req, res, next) {
-  model.Content.find({}, 'url_slug post_date title author',
-    function(err, contents) {
-      if (err) return console.log(err);
-      res.render('list', { 'contents': contents });
+  async.parallel({
+    contents: function(callback) {
+      model.Content.find({}, 'url_slug post_date title _author',
+        function(err, contents) {
+          if (err) return console.log(err);
+          return callback(null,  contents);
+      });
+    },
+
+    users: function(callback) {
+      user_model.User.find({}, 'first_name last_name _id',
+        function(err, users) {
+          if (err) return console.log(err);
+          return callback(null, users);
+      });
+    },
+  },
+
+  function(err, results) {
+    res.render('list', results);
   });
 }
 
@@ -67,6 +85,7 @@ exports.update = function(req, res, next) {
 
     error: function(form) {
       res.render('update', {
+        header: 'Edit Content',
         form: form.toHTML(bootstrap_field),
         csrf_token: req.csrfToken()
       });
@@ -109,6 +128,7 @@ exports.add = function(req, res, next) {
 
     error: function(form) {
       res.render('update', {
+        header: 'Create Content',
         form: form.toHTML(bootstrap_field),
         csrf_token: req.csrfToken()
       });

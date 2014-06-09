@@ -30,6 +30,9 @@ swig.setDefaults({
 // set views for error and 404 pages
 app.set('views', __dirname + '/views');
 
+// Import Custom Template Objects
+var tf = require('./lib/template_filters');
+
 // setup db
 var db_opts = require('./config/db');
 

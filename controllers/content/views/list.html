@@ -19,7 +19,7 @@
         <tr>
           <td><a href="/content/{{ content.url_slug }}/edit">{{ content.title }}</a></td>
           <td>{{ content.post_date.toDateString() }}</td>
-          <td>{# content.author TODO - create lookup to get name #}</td>
+          <td>{{ users|get_author(content._author) }}</td>
           <td><a href="/content/{{ content.url_slug }}">/{{ content.url_slug }}</a></td>
         </tr>
         {% endfor %}

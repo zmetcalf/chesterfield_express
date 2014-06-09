@@ -15,7 +15,7 @@ var cms_schema = mongoose.Schema({
 
 cms_schema.statics.is_unique_slug = function(slug, content_id, callback) {
   this.find({}, 'url_slug _id', function(err, contents) {
-    if (err) return console.log(err);
+    if (err) return callback(err);
 
     var fltrd = _.filter(contents, function(content) {
       return slug == content.url_slug && content_id != content._id;
