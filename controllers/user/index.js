@@ -51,18 +51,34 @@ exports.show = function(req, res, next) {
 }
 
 exports.update = function(req, res, next) {
-  var update_fields = {};
-  _.each(['first_name', 'last_name', 'is_staff'], function(field) {
-    if(req.body[field]) {
-      update_fields[field] = req.body[field];
-    }
-  });
+  update_form(req.user).handle(req, {
+    success: function(form) {
+      var update_fields = {};
+      _.each(['first_name', 'last_name', 'is_staff'], function(field) {
+        if(req.body[field]) {
+          update_fields[field] = req.body[field];
+        }
+      });
 
-  model.User.findOneAndUpdate({ username: req.user.username }, update_fields,
-    function(err, user) {
-      if (err) return console.log(err);
-      res.message('Information updated!');
-      res.redirect('/user/' + req.user.username);
+      model.User.findOneAndUpdate({ username: req.user.username }, update_fields,
+        function(err, user) {
+          if (err) return console.log(err);
+          res.message('Information updated!');
+          res.redirect('/user/' + req.user.username);
+      });
+    },
+
+    error: function(form) {
+      res.render('edit', {
+        form: form.toHTML(bootstrap_field),
+        user: req.user,
+        csrf_token: req.csrfToken()
+      });
+    },
+
+    empty: function(form) {
+      res.redirect('/user/' + req.user.username + '/edit');
+    }
   });
 }
 
@@ -115,13 +131,15 @@ function update_form(user) {
     first_name: fields.string({
       widget: widgets.text(),
       errorAfterField: true,
-      value: user.first_name
+      value: user.first_name,
+      required: true
     }),
 
     last_name: fields.string({
       widget: widgets.text(),
       errorAfterField: true,
-      value: user.last_name
+      value: user.last_name,
+      required: true
     }),
 
     is_staff: fields.boolean({
@@ -131,7 +149,8 @@ function update_form(user) {
         false: "No"
       },
       errorAfterField: true,
-      value: String(user.is_staff)
+      value: String(user.is_staff),
+      required: true
     })
   });
 }
