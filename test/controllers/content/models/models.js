@@ -74,7 +74,7 @@ describe('Is Unique Slug', function() {
 
   it('should return false - duplicate slug', function(done) {
     model.Content.findOne({ 'url_slug': 'bar' }, '_id', function(err, content_id) {
-      model.Content.is_unique_slug('foo', content_id, function(err, is_unique) {
+      model.Content.is_unique_slug('foo', String(content_id), function(err, is_unique) {
         if(err) return console.log(err);
         assert.isFalse(is_unique);
         done();
