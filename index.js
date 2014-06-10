@@ -36,9 +36,11 @@ var tf = require('./lib/template_filters');
 // setup db
 var db_opts = require('./config/db');
 
-mongoose.connect('mongodb://localhost/' + db_opts.db_name, db_opts.options);
-var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'db connection error:'));
+if(!mongoose.connection.readyState) {
+  mongoose.connect('mongodb://localhost/' + db_opts.db_name, db_opts.options);
+  var db = mongoose.connection;
+  db.on('error', console.error.bind(console, 'db connection error:'));
+}
 
 // define a custom res.message() method
 // which stores messages in the session

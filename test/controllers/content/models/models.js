@@ -1,49 +1,75 @@
 var assert = require('chai').assert,
+    async = require('async'),
     mongoose = require('mongoose'),
-    mockgoose = require('mockgoose');
+    db_opts = require('../../../../config/db'),
+    user_model = require('../../../../controllers/user/models/models'),
+    model = require('../../../../controllers/content/models/models');
 
-mockgoose(mongoose);
 
 describe('Is Unique Slug', function() {
 
-  var user_model = require('../../../../controllers/user/models/models');
-  var model = require('../../../../controllers/content/models/models');
+  beforeEach(function(done) {
 
-  user_model.User.create({
-    first_name: 'Test',
-    last_name: 'User',
-    username: 'content_user',
-    is_staff: true,
-    hash: '',
-    salt: ''
-  }, function(err, user) {
-    if(err) return console.log(err);
+    if(!mongoose.connection.readyState) {
+      mongoose.connect('mongodb://localhost/chest_test/', db_opts.options);
+    }
 
-    model.Content.create({
-      title: 'Title',
-      summary: 'Summary',
-      content: 'Content',
-      published: true,
-      _author: user._id,
-      seo_keywords: 'seo_key',
-      seo_description: 'seo_descript',
-      url_slug: 'foo'
-    }, function(err, content) {
+    user_model.User.create({
+      first_name: 'Test',
+      last_name: 'User',
+      username: 'content_user',
+      is_staff: true,
+      hash: '',
+      salt: ''
+    }, function(err, user) {
       if(err) return console.log(err);
-    });
 
-    model.Content.create({
-      title: 'Title',
-      summary: 'Summary',
-      content: 'Content',
-      _author: user._id,
-      published: true,
-      seo_keywords: 'seo_key',
-      seo_description: 'seo_descript',
-      url_slug: 'bar'
-    }, function(err, content) {
-      if(err) return console.log(err);
+      async.parallel([
+        function(callback) {
+
+          model.Content.create({
+            title: 'Title',
+            summary: 'Summary',
+            content: 'Content',
+            published: true,
+            _author: user._id,
+            seo_keywords: 'seo_key',
+            seo_description: 'seo_descript',
+            url_slug: 'foo'
+          }, function(err, content) {
+            if(err) return console.log(err);
+            callback(null);
+          });
+        },
+
+        function(callback) {
+          model.Content.create({
+            title: 'Title',
+            summary: 'Summary',
+            content: 'Content',
+            _author: user._id,
+            published: true,
+            seo_keywords: 'seo_key',
+            seo_description: 'seo_descript',
+            url_slug: 'bar'
+          }, function(err, content) {
+            if(err) return console.log(err);
+            callback(null);
+          });
+        },
+      ],
+
+      function(err, results) {
+        done();
+      });
     });
+  });
+
+  afterEach(function() {
+    var q = model.Content.remove({});
+    q.exec();
+    q = user_model.User.remove({});
+    q.exec();
   });
 
   it('should return false - duplicate slug', function(done) {
@@ -58,7 +84,7 @@ describe('Is Unique Slug', function() {
 
   it('should return true - same content', function(done) {
     model.Content.findOne({ 'url_slug': 'foo' }, '_id', function(err, content) {
-      model.Content.is_unique_slug('foo', content._id, function(err, is_unique) {
+      model.Content.is_unique_slug('foo', String(content._id), function(err, is_unique) {
         if(err) return console.log(err);
         assert.isTrue(is_unique);
         done();
