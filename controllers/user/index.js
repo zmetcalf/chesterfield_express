@@ -112,7 +112,7 @@ exports.create = function(req, res, next) {
             hash: _hash,
             salt: _salt
           }, function(err, new_user) {
-            if(err) return handleError(err);
+            if(err) return console.log(err);
             req.session.success = 'New Password is: ' + password;
             res.redirect('/user/' + req.body.username);
           });

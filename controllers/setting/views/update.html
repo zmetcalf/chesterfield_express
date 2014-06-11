@@ -1,0 +1,11 @@
+{% extends 'dashboard.html' %}
+
+{% block page_header %}Settings{% endblock %}
+
+{% block content %}
+  <form role="form" action="/setting/{{ user.username }}?_method=put" method="post">
+    <input type="hidden" name="_csrf" value="{{ csrf_token }}">
+      {% autoescape false %}{{ form }}{% endautoescape %}
+    <button class='btn btn-primary' type="submit">Update Password</button>
+  </form>
+{% endblock %}
