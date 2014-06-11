@@ -13,6 +13,8 @@ if(!mongoose.connection.readyState) {
 
 // DO NOT MOVE - WILL DELETE PRODUCTION DB
 var app = require('../../../index');
+var server = request.agent(app);
+var csrf = '';
 
 describe('Content Authentication', function() {
   beforeEach(function(done) {
@@ -77,31 +79,95 @@ describe('Content Authentication', function() {
       .expect(302, done)
     });
 
-    it('should fail to PUT', function(done) {
-      request(app)
-      .put('/content/blog')
-      .send({ title: 'tiTLE'})
-      .expect(500, done)
+    it('should redirect to /login after PUT', function(done) {
+      async.series([
+        function(callback) {
+          server
+            .get('/login')
+            .end(function(err, res) {
+              if(err) console.log(err);
+              var $ = cheerio.load(res.text);
+              csrf = $('input[name="_csrf"]').val();
+              callback(null);
+          });
+        },
+        function(callback) {
+          server
+          .put('/content/blog')
+          .send({ title: 'tiTLE', _csrf: csrf })
+          .expect('Location', '/login')
+          .expect(302)
+          .end(function(err, res) {
+            if(err) console.log(err);
+            callback(null);
+          });
+        }
+      ],
+      function(err, results) {
+        done(err);
+      });
     });
 
-    it('should fail to POST', function(done) {
-      request(app)
-      .put('/content/blog')
-      .send({ title: 'tiTLE'})
-      .expect(500, done)
+    it('should redirect to /login after POST', function(done) {
+      async.series([
+        function(callback) {
+          server
+            .get('/login')
+            .end(function(err, res) {
+              if(err) console.log(err);
+              var $ = cheerio.load(res.text);
+              csrf = $('input[name="_csrf"]').val();
+              callback(null);
+          });
+        },
+        function(callback) {
+          server
+          .put('/content/blog')
+          .send({ title: 'tiTLE', _csrf: csrf })
+          .expect('Location', '/login')
+          .expect(302)
+          .end(function(err, res) {
+            if(err) console.log(err);
+            callback(null);
+          });
+        }
+      ],
+      function(err, results) {
+        done();
+      });
     });
 
-    it('should fail to DELETE', function(done) {
-      request(app)
-      .delete('/content/blog')
-      .expect(500, done)
+    it('should redirect to /login after DELETE', function(done) {
+      async.series([
+        function(callback) {
+          server
+            .get('/login')
+            .end(function(err, res) {
+              if(err) console.log(err);
+              var $ = cheerio.load(res.text);
+              csrf = $('input[name="_csrf"]').val();
+              callback(null);
+          });
+        },
+        function(callback) {
+          server
+          .delete('/content/blog')
+          .send({ _csrf: csrf })
+          .expect('Location', '/login')
+          .expect(302)
+          .end(function(err, res) {
+            if(err) console.log(err);
+            callback(null);
+          });
+        }
+      ],
+      function(err, results) {
+        done(err);
+      });
     });
   });
 
   describe('Authenticated', function() {
-    var server = request.agent(app);
-    var csrf = '';
-
     beforeEach(function(done) {
       async.series([
         function(callback) {
@@ -180,7 +246,7 @@ describe('Content Authentication', function() {
           server
           .put('/content/blog')
           .send({ title: 'tiTLE', _csrf: csrf })
-          .expect(302)
+          .expect(200, /tiTLE/)
           .end(function(err, res) {
             if(err) console.log(err);
             callback(null);
@@ -188,7 +254,7 @@ describe('Content Authentication', function() {
         }
       ],
       function(err, results) {
-        done();
+        done(err);
       });
     });
 
@@ -207,8 +273,8 @@ describe('Content Authentication', function() {
         function(callback) {
           server
           .put('/content/blog')
-          .send({ title: 'tiTLE', _csrf: csrf})
-          .expect(302)
+          .send({ title: 'tiTLE', _csrf: csrf })
+          .expect(200, /tiTLE/)
           .end(function(err, res) {
             if(err) console.log(err);
             callback(null);
@@ -220,10 +286,33 @@ describe('Content Authentication', function() {
       });
     });
 
-    it.skip('should DELETE', function(done) {
-      request(app)
-      .delete('/content/blog')
-      .expect(302, done)
+    it('should DELETE', function(done) {
+      async.series([
+        function(callback) {
+          server
+            .get('/content/blog/edit')
+            .end(function(err, res) {
+              if(err) console.log(err);
+              var $ = cheerio.load(res.text);
+              csrf = $('input[name="_csrf"]').val();
+              callback(null);
+          });
+        },
+        function(callback) {
+          server
+          .delete('/content/blog')
+          .send({ _csrf: csrf })
+          .expect('Location', '/contents')
+          .expect(302)
+          .end(function(err, res) {
+            if(err) console.log(err);
+            callback(null);
+          });
+        }
+      ],
+      function(err, results) {
+        done(err);
+      });
     });
   });
 });
