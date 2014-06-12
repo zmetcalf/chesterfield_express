@@ -36,7 +36,7 @@ exports.update = function(req, res, next) {
         },  function(err, user) {
           if(err) return console.log(err);
           res.message('Information updated!');
-          res.redirect('/settings');
+          res.redirect('/user_settings');
         });
       });
     },
@@ -50,7 +50,7 @@ exports.update = function(req, res, next) {
     },
 
     empty: function(form) {
-      res.redirect('/settings');
+      res.redirect('/user_settings');
     }
   });
 }
