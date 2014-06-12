@@ -3,6 +3,7 @@
 {% block page_header %}Users{% endblock %}
 
 {% block content %}
+  {% autoescape false %}{{ message }}{% endautoescape %}
   <a href='/create_user' class="btn btn-primary" role="button">Create User</a>
   <div class="table-responsive">
     <table class="table table-striped">

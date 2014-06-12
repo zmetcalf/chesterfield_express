@@ -3,6 +3,7 @@
 {% block page_header %}{{ user.first_name }} {{ user.last_name }}{% endblock %}
 
 {% block content %}
+  {% autoescape false %}{{ message }}{% endautoescape %}
   <h3>Username - {{ user.username }}</h3>
   <h3>
     {% if user.is_staff %}
@@ -11,6 +12,5 @@
       Is Authenticated User
     {% endif %}
   </h3>
-  {% autoescape false %}{{ msg }}{% endautoescape %}
   <a href='/user/{{ user.username}}/edit' class='btn btn-primary' role="button">Edit User</a>
 {% endblock %}

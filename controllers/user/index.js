@@ -31,7 +31,10 @@ exports.list = function(req, res, next) {
   model.User.find({}, 'first_name last_name is_staff username',
     function(err, users) {
       if (err) return console.log(err);
-      res.render('list', { 'users': users });
+      res.render('list', {
+        'users': users,
+        message: res.locals.message
+      });
   });
 }
 
@@ -46,13 +49,14 @@ exports.edit = function(req, res, next) {
 exports.show = function(req, res, next) {
   res.render('show', {
     user: req.user,
-    msg: res.locals.message
+    message: res.locals.message
   });
 }
 
 exports.delete = function(req, res, next) {
   model.User.findByIdAndRemove(req.user._id, function(err) {
     if(err) return console.log(err);
+    req.session.error = 'User Deleted';
     res.redirect('/users');
   });
 }
@@ -70,7 +74,7 @@ exports.update = function(req, res, next) {
       model.User.findOneAndUpdate({ username: req.user.username }, update_fields,
         function(err, user) {
           if (err) return console.log(err);
-          res.message('Information updated!');
+          req.session.success = 'User updated';
           res.redirect('/user/' + req.user.username);
       });
     },

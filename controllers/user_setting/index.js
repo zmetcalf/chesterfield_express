@@ -17,6 +17,7 @@ exports.before = function(req, res, next) {
 
 exports.list = function(req, res, next) {
   res.render('update', {
+    message: res.locals.message,
     form: update_form.toHTML(bootstrap_field),
     csrf_token: req.csrfToken(),
     user: req.session.user
@@ -35,7 +36,7 @@ exports.update = function(req, res, next) {
           hash: _hash
         },  function(err, user) {
           if(err) return console.log(err);
-          res.message('Information updated!');
+          req.session.success = 'Information updated!';
           res.redirect('/user_settings');
         });
       });

@@ -3,6 +3,7 @@
 {% block page_header %}Content{% endblock %}
 
 {% block content %}
+  {% autoescape false %}{{ message }}{% endautoescape %}
   <a href='/create_content' class="btn btn-primary" role="button">Create Content</a>
   <div class="table-responsive">
     <table class="table table-striped">

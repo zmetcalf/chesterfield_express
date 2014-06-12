@@ -2,6 +2,50 @@
 
 {% block page_header %}Dashboard{% endblock %}
 
-{#
-  Make two sub-headers that display content and users
-#}
+{% block content %}
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Post Date</th>
+          <th>Author</th>
+          <th>Url</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for content in contents %}
+        <tr>
+          <td><a href="/content/{{ content.url_slug }}/edit">{{ content.title }}</a></td>
+          <td>{{ content.post_date.toDateString() }}</td>
+          <td>{{ users|get_author(content._author) }}</td>
+          <td><a href="/content/{{ content.url_slug }}">/{{ content.url_slug }}</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Last Name</th>
+          <th>First Name</th>
+          <th>Username</th>
+          <th>Staff</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+        <tr>
+          <td><a href="/user/{{ user.username }}">{{ user.last_name }}</a></td>
+          <td>{{ user.first_name }}</td>
+          <td>{{ user.username }}</td>
+          <td>{% if user.is_staff %}Yes{% else %}No{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
