@@ -1,7 +1,6 @@
 var express = require('express'),
   logger = require('morgan'),
   session = require('express-session'),
-  cookieParser = require('cookie-parser'),
   bodyParser = require('body-parser'),
   csrf = require('csurf'),
   helmet = require('helmet'),
@@ -66,7 +65,6 @@ app.use(helmet.iexss());
 app.use(helmet.contentTypeOptions());
 
 // session support
-app.use(cookieParser(secret_key));
 app.use(session({
   secret: secret_key,
   store: new MongoStore({
@@ -76,7 +74,7 @@ app.use(session({
 }));
 
 // parse request bodies (req.body)
-app.use(bodyParser());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 // override methods (put, delete)
 app.use(methodOverride('_method'));
