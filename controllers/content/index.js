@@ -63,6 +63,7 @@ exports.edit = function(req, res, next) {
 
 exports.show = function(req, res, next) {
   res.render('show', {
+    message: res.locals.message,
     content: req.content,
   });
 }
@@ -70,6 +71,7 @@ exports.show = function(req, res, next) {
 exports.delete = function(req, res, next) {
   model.Content.findByIdAndRemove(req.content._id, function(err) {
     if(err) return console.log(err);
+    req.session.error = 'Content Deleted';
     res.redirect('/contents');
   });
 }

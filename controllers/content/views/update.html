@@ -3,6 +3,7 @@
 {% block page_header %}{{ header }}{% endblock %}
 
 {% block content %}
+  {% autoescape false %}{{ message }}{% endautoescape %}
   <form role="form" action="{{ action_url }}" method="post">
     <input type="hidden" name="_csrf" value="{{ csrf_token }}">
       {% autoescape false %}{{ form }}{% endautoescape %}
