@@ -206,25 +206,25 @@ describe('Content Authentication', function() {
         });
     });
 
-    it('should redirect to /login from /contents', function(done) {
+    it('should get /contents', function(done) {
       server
       .get('/contents')
       .expect(200, done)
     });
 
-    it('should show /content/blog', function(done) {
+    it('should get /content/blog', function(done) {
       server
       .get('/content/blog')
       .expect(200, done);
     });
 
-    it('should redirect to /login from /content/blog/edit', function(done) {
+    it('should get /content/blog/edit', function(done) {
       server
       .get('/content/blog/edit')
       .expect(200, done)
     });
 
-    it('should redirect to /login from /create_content', function(done) {
+    it('should get /create_content', function(done) {
       server
       .get('/create_content')
       .expect(200, done)
