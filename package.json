@@ -18,7 +18,8 @@
     "forms": "0.x",
     "underscore": "1.x",
     "bower": "1.x",
-    "async": "0.x"
+    "async": "0.x",
+    "sanitize-html": "1.x"
   },
 
   "devDependencies": {

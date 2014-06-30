@@ -12,10 +12,9 @@ var express = require('express'),
   secret_key = require('./config/site').secret_key,
 
   // Context Processors
-  current_page = require('./lib/context_processors/current_page'),
-  logged_in = require('./lib/context_processors/logged_in');
+  context_processors = require('./lib/context_processors');
 
-
+console.log(swig);
 var app = module.exports = express();
 
 // Setup Swig templates
@@ -114,8 +113,7 @@ app.use(function(req, res, next){
 });
 
 // Context processors for templates - Must come after session - before controllers
-app.use(logged_in());
-app.use(current_page());
+app.use(context_processors());
 
 // load controllers
 require('./lib/boot')(app, { verbose: !module.parent });

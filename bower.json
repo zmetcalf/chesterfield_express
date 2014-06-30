@@ -2,6 +2,7 @@
   "name": "chesterfield_express",
   "version": "0.0.1",
   "dependencies": {
-    "bootstrap": "3.x"
+    "bootstrap": "3.x",
+    "tinymce-dist": "4.x"
   }
 }

@@ -2,6 +2,7 @@ var model = require('./models/models'),
     user_model = require('../user/models/models'),
     _ = require('underscore'),
     async = require('async'),
+    sanitize_html = require('sanitize-html'),
     forms = require('forms'),
     fields = forms.fields,
     validators = forms.validators,
@@ -82,12 +83,12 @@ exports.update = function(req, res, next) {
       model.Content.findOneAndUpdate({ url_slug: req.content.url_slug }, {
         title: req.body.title,
         post_date: req.body.post_date,
-        summary: req.body.summary,
-        content: req.body.content,
+        summary: sanitize_html(req.body.summary),
+        content: sanitize_html(req.body.content),
         published: req.body.published,
-        seo_keywords: req.body.seo_keywords,
-        seo_description: req.body.seo_description,
-        url_slug: req.body.url_slug
+        seo_keywords: sanitize_html(req.body.seo_keywords),
+        seo_description: sanitize_html(req.body.seo_description),
+        url_slug: clean_slug(req.body.url_slug)
       }, function(err, content) {
           if(err) return console.log(err);
           req.session.success = 'Content Updated';
@@ -122,19 +123,19 @@ exports.create = function(req, res, next) {
   content_form().handle(req, {
     success: function(form) {
       model.Content.create({
-        title: req.body.title,
+        title: sanitize_html(req.body.title),
         post_date: req.body.post_date,
-        summary: req.body.summary,
-        content: req.body.content,
+        summary: sanitize_html(req.body.summary),
+        content: sanitize_html(req.body.content),
         published: req.body.published,
         _author: req.session.user._id,
-        seo_keywords: req.body.seo_keywords,
-        seo_description: req.body.seo_description,
-        url_slug: req.body.url_slug
+        seo_keywords: sanitize_html(req.body.seo_keywords),
+        seo_description: sanitize_html(req.body.seo_description),
+        url_slug: clean_slug(req.body.url_slug)
       }, function(err, new_user) {
           if(err) return console.log(err);
           req.session.success = 'Content Created';
-          res.redirect('/content/' + req.body.url_slug + '/edit');
+          res.redirect('/content/' + clean_slug(req.body.url_slug) + '/edit');
       });
     },
 
@@ -230,4 +231,8 @@ function unique_slug(form, field, callback) {
         return callback('URL already in use.');
       }
   });
+}
+
+function clean_slug(slug) {
+  return sanitize_html(slug.replace(/\//g, ''));
 }

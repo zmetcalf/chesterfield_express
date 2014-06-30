@@ -2,6 +2,7 @@ var model = require('./models/models'),
     gen_password = require('../../lib/utils').gen_password,
     hash = require('pwd').hash,
     _ = require('underscore'),
+    sanitize_html = require('sanitize-html'),
     forms = require('forms'),
     fields = forms.fields,
     validators = forms.validators,
@@ -67,7 +68,7 @@ exports.update = function(req, res, next) {
       var update_fields = {};
       _.each(['first_name', 'last_name', 'is_staff'], function(field) {
         if(req.body[field]) {
-          update_fields[field] = req.body[field];
+          update_fields[field] = sanitize_html(req.body[field]);
         }
       });
 
@@ -109,9 +110,9 @@ exports.create = function(req, res, next) {
           if (err) return console.log(err);
 
           model.User.create({
-            first_name: req.body.first_name,
-            last_name: req.body.last_name,
-            username: req.body.username,
+            first_name: sanitize_html(req.body.first_name),
+            last_name: sanitize_html(req.body.last_name),
+            username: sanitize_html(req.body.username),
             is_staff: req.body.is_staff,
             hash: _hash,
             salt: _salt
