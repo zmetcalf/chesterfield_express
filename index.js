@@ -10,8 +10,6 @@ var express = require('express'),
   swig = require('swig'),
   path = require('path'),
   secret_key = require('./config/site').secret_key,
-
-  // Context Processors
   context_processors = require('./lib/context_processors');
 
 console.log(swig);

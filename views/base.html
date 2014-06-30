@@ -44,6 +44,7 @@
             <li {% if reqpath === '/content/about' %}class="active"{% endif %}><a href="/content/about">About</a></li>
             <li {% if reqpath === '/content/contact' %}class="active"{% endif %}><a href="/content/contact">Contact</a></li>
             {% if logged_in %}
+              <li><a href="/dashboards">Dashboard</a></li>
               <li><a href="/logout">Logout</a></li>
             {% else %}
               <li><a href="/login">Login</a></li>
