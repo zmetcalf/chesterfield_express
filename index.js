@@ -9,8 +9,12 @@ var express = require('express'),
   MongoStore = require('connect-mongo')(session),
   swig = require('swig'),
   path = require('path'),
-  logged_in = require('./lib/middleware/logged_in');
-  secret_key = require('./config/site').secret_key;
+  secret_key = require('./config/site').secret_key,
+
+  // Context Processors
+  current_page = require('./lib/context_processors/current_page'),
+  logged_in = require('./lib/context_processors/logged_in');
+
 
 var app = module.exports = express();
 
@@ -36,7 +40,7 @@ var tf = require('./lib/template_filters');
 // setup db
 var db_opts = require('./config/db');
 
-if(!mongoose.connection.readyState) {
+if(!module.parent && !mongoose.connection.readyState) {
   mongoose.connect('mongodb://localhost/' + db_opts.db_name, db_opts.options);
   var db = mongoose.connection;
   db.on('error', console.error.bind(console, 'db connection error:'));
@@ -109,8 +113,9 @@ app.use(function(req, res, next){
   req.session.messages = [];
 });
 
-// Middleware for views - Must come after session - before controllers
+// Context processors for templates - Must come after session - before controllers
 app.use(logged_in());
+app.use(current_page());
 
 // load controllers
 require('./lib/boot')(app, { verbose: !module.parent });
