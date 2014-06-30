@@ -62,8 +62,8 @@ app.use(express.static(__dirname + '/public'));
 // Helmet for safe headers
 app.use(helmet.csp());
 app.use(helmet.xframe('deny'));
-app.use(helmet.iexss());
-app.use(helmet.contentTypeOptions());
+app.use(helmet.xssFilter());
+app.use(helmet.nosniff());
 
 // session support
 app.use(session({
