@@ -12,7 +12,6 @@ var express = require('express'),
   secret_key = require('./config/site').secret_key,
   context_processors = require('./lib/context_processors');
 
-console.log(swig);
 var app = module.exports = express();
 
 // Setup Swig templates
