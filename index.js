@@ -68,6 +68,8 @@ app.use(helmet.nosniff());
 // session support
 app.use(session({
   secret: secret_key,
+  resave: false,
+  saveUninitialized: false,
   store: new MongoStore({
     url: 'mongodb://' + db_opts.options.user + ':' + db_opts.options.pass +
          '@localhost:27017/' + db_opts.db_name + '/sessions'
