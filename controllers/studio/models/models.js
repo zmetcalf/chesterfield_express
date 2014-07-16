@@ -1,14 +1,14 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
-var photo_schema = mongoose.Schema({
+var studio_schema = mongoose.Schema({
   title: String,
   post_date: { type: Date, default: Date.now },
   description: String,
   published: Boolean,
   _author: { type: Schema.Types.ObjectId, ref: 'User' },
-  _studios: [ { type: Schema.Types.ObjectId, ref: 'Gallery' } ],
+  _photos: [ { type: Schema.Types.ObjectId, ref: 'Photo' } ],
   url_slug: String,
 });
 
-var Photo = exports.Photo = mongoose.model('Photo', photo_schema);
+var Studio = exports.Studio = mongoose.model('Studio', studio_schema);

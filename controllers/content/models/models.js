@@ -1,4 +1,5 @@
 var mongoose = require('mongoose'),
+    Schema = mongoose.Schema,
     _ = require('underscore');
 
 var cms_schema = mongoose.Schema({
@@ -7,7 +8,7 @@ var cms_schema = mongoose.Schema({
   summary: String,
   content: String,
   published: Boolean,
-  _author: { type: String, ref: 'User' },
+  _author: { type: Schema.Types.ObjectId, ref: 'User' },
   seo_keywords: String,
   seo_description: String,
   url_slug: String,
