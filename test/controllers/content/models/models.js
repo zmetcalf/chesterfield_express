@@ -3,6 +3,7 @@ var assert = require('chai').assert,
     mongoose = require('mongoose'),
     db_opts = require('../../../../config/db'),
     user_model = require('../../../../controllers/user/models/models'),
+    studio_model = require('../../../../controllers/studio/models/models'),
     model = require('../../../../controllers/content/models/models');
 
 
@@ -57,6 +58,22 @@ describe('Is Unique Slug', function() {
             callback(null);
           });
         },
+
+        function(callback) {
+          studio_model.Studio.create({
+            title: 'Title',
+            summary: 'Summary',
+            content: 'Content',
+            _author: user._id,
+            published: true,
+            seo_keywords: 'seo_key',
+            seo_description: 'seo_descript',
+            url_slug: 'foobar'
+          }, function(err, content) {
+            if(err) return console.log(err);
+            callback(null);
+          });
+        },
       ],
 
       function(err, results) {
@@ -70,10 +87,22 @@ describe('Is Unique Slug', function() {
     q.exec();
     q = user_model.User.remove({});
     q.exec();
+    q = studio_model.Studio.remove({});
+    q.exec();
   });
 
   it('should return false - duplicate slug', function(done) {
     model.Content.findOne({ 'url_slug': 'bar' }, '_id', function(err, content_id) {
+      model.Content.is_unique_slug('foo', String(content_id), function(err, is_unique) {
+        if(err) return console.log(err);
+        assert.isFalse(is_unique);
+        done();
+      });
+    });
+  });
+
+  it('should return false - duplicate slug - other model', function(done) {
+    model.Content.findOne({ 'url_slug': 'foobar' }, '_id', function(err, content_id) {
       model.Content.is_unique_slug('foo', String(content_id), function(err, is_unique) {
         if(err) return console.log(err);
         assert.isFalse(is_unique);

@@ -1,0 +1,30 @@
+{% extends 'dashboard.html' %}
+
+{% block page_header %}Studios{% endblock %}
+
+{% block content %}
+  {% autoescape false %}{{ message }}{% endautoescape %}
+  <a href='/create_studio' class="btn btn-primary" role="button">Create Studio</a>
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Post Date</th>
+          <th>Author</th>
+          <th>Url</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for studio in studios %}
+        <tr>
+          <td><a href="/studio/{{ studio.url_slug }}/edit">{{ studio.title }}</a></td>
+          <td>{{ studio.post_date.toDateString() }}</td>
+          <td>{{ users|get_author(studio._author) }}</td>
+          <td><a href="/studio/{{ studio.url_slug }}">/{{ studio.url_slug }}</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock content %}

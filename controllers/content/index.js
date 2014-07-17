@@ -9,6 +9,7 @@ var model = require('./models/models'),
     widgets = forms.widgets,
     bootstrap_field = require('../../lib/forms').bootstrap_field;
 
+
 exports.before = function(req, res, next) {
   if ((req.route.path === '/content/:content_id' && req.route.method==='get') ||
       req.session.user && req.session.user.is_staff) {
@@ -26,6 +27,7 @@ exports.before = function(req, res, next) {
     res.redirect('/login');
   }
 }
+
 
 exports.list = function(req, res, next) {
   async.parallel({
@@ -51,6 +53,7 @@ exports.list = function(req, res, next) {
   });
 }
 
+
 exports.edit = function(req, res, next) {
   res.render('update', {
     header: 'Edit Content',
@@ -62,12 +65,14 @@ exports.edit = function(req, res, next) {
   });
 }
 
+
 exports.show = function(req, res, next) {
   res.render('show', {
     message: res.locals.message,
     content: req.content,
   });
 }
+
 
 exports.delete = function(req, res, next) {
   model.Content.findByIdAndRemove(req.content._id, function(err) {
@@ -77,11 +82,12 @@ exports.delete = function(req, res, next) {
   });
 }
 
+
 exports.update = function(req, res, next) {
   content_form().handle(req, {
     success: function(form) {
       model.Content.findOneAndUpdate({ url_slug: req.content.url_slug }, {
-        title: req.body.title,
+        title: sanitize_html(req.body.title),
         post_date: req.body.post_date,
         summary: sanitize_html(req.body.summary),
         content: sanitize_html(req.body.content),
@@ -110,6 +116,7 @@ exports.update = function(req, res, next) {
   });
 }
 
+
 exports.add = function(req, res, next) {
   res.render('update', {
     header: 'Create Content',
@@ -118,6 +125,7 @@ exports.add = function(req, res, next) {
     csrf_token: req.csrfToken()
   });
 }
+
 
 exports.create = function(req, res, next) {
   content_form().handle(req, {
@@ -152,6 +160,7 @@ exports.create = function(req, res, next) {
     }
   });
 }
+
 
 function content_form(content) {
   content = content || {};
@@ -220,6 +229,7 @@ function content_form(content) {
   });
 }
 
+
 function unique_slug(form, field, callback) {
   content_id = form.data.id || '';
   model.Content.is_unique_slug(field.data, content_id,
@@ -232,6 +242,7 @@ function unique_slug(form, field, callback) {
       }
   });
 }
+
 
 function clean_slug(slug) {
   return sanitize_html(slug.replace(/\//g, ''));

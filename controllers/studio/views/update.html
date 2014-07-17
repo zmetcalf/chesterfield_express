@@ -1,0 +1,19 @@
+{% extends 'dashboard.html' %}
+
+{% block page_header %}{{ header }}{% endblock %}
+
+{% block content %}
+  {% autoescape false %}{{ message }}{% endautoescape %}
+  <form role="form" action="{{ action_url }}" method="post">
+    <input type="hidden" name="_csrf" value="{{ csrf_token }}">
+      {% autoescape false %}{{ form }}{% endautoescape %}
+    <button class='btn btn-primary' type="submit">{{ header }}</button>
+  </form>
+  {% if exists %}
+  <br>
+  <form role="form" action="/studio/{{ slug }}?_method=delete" method="post">
+    <input type="hidden" name="_csrf" value="{{ csrf_token }}">
+    <button class='btn btn-danger' type="submit">Delete Studio</button>
+  </form>
+  {% endif %}
+{% endblock %}

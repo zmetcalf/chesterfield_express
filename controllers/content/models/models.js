@@ -1,5 +1,7 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
+    studio_model = require('../../studio/models/models'),
+    async = require('async'),
     _ = require('underscore');
 
 var cms_schema = mongoose.Schema({
@@ -14,12 +16,29 @@ var cms_schema = mongoose.Schema({
   url_slug: String,
 });
 
-cms_schema.statics.is_unique_slug = function(slug, content_id, callback) {
-  this.find({}, 'url_slug _id', function(err, contents) {
-    if (err) return callback(err);
 
-    var fltrd = _.filter(contents, function(content) {
-      return slug == content.url_slug && content_id != content._id;
+// TODO Needs Refactored into utils
+cms_schema.statics.is_unique_slug = function(slug, content_id, callback) {
+  var content_model = this;
+  async.parallel([
+    function(callback) {
+      content_model.find({}, 'url_slug _id', function(err, contents) {
+        if (err) return callback(err);
+        callback(null, contents)
+      });
+    },
+
+    function(callback) {
+      studio_model.Studio.find({}, 'url_slug _id', function(err, studios) {
+        if (err) return callback(err);
+        callback(null, studios)
+      });
+    }
+  ],
+
+  function(err, results) {
+    var fltrd = _.filter(_.flatten(results), function(result) {
+      return slug == result.url_slug && content_id != result._id;
     });
 
     if (fltrd.length) {
