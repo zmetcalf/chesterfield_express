@@ -98,7 +98,7 @@ exports.update = function(req, res, next) {
       }, function(err, content) {
           if(err) return console.log(err);
           req.session.success = 'Content Updated';
-          res.redirect('/content/' + req.body.url_slug + '/edit');
+          res.redirect('/content/' + clean_slug(req.body.url_slug) + '/edit');
       });
     },
 
@@ -245,5 +245,5 @@ function unique_slug(form, field, callback) {
 
 
 function clean_slug(slug) {
-  return sanitize_html(slug.replace(/\//g, ''));
+  return sanitize_html(slug.replace(/\//g, '')).toLowerCase();
 }

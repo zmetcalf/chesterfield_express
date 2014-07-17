@@ -6,6 +6,7 @@ var photo_schema = mongoose.Schema({
   post_date: { type: Date, default: Date.now },
   description: String,
   published: Boolean,
+  path: String,
   _author: { type: Schema.Types.ObjectId, ref: 'User' },
   _studios: [ { type: Schema.Types.ObjectId, ref: 'Gallery' } ],
 });
