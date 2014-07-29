@@ -138,7 +138,7 @@ exports.create = function(req, res, next) {
         seo_keywords: sanitize_html(req.body.seo_keywords),
         seo_description: sanitize_html(req.body.seo_description),
         url_slug: clean_slug(req.body.url_slug)
-      }, function(err, new_user) {
+      }, function(err, studio) {
           if(err) return console.log(err);
           req.session.success = 'Studio Created';
           res.redirect('/studio/' + clean_slug(req.body.url_slug) + '/edit');

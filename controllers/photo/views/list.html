@@ -1,0 +1,30 @@
+{% extends 'dashboard.html' %}
+
+{% block page_header %}Photos{% endblock %}
+
+{% block content %}
+  {% autoescape false %}{{ message }}{% endautoescape %}
+  <a href='/create_photo' class="btn btn-primary" role="button">Create Photo</a>
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Post Date</th>
+          <th>Author</th>
+          <th>Url</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for photo in photos %}
+        <tr>
+          <td><a href="/photo/{{ photo._id.toString() }}/edit">{{ photo.title }}</a></td>
+          <td>{{ photo.post_date.toDateString() }}</td>
+          <td>{{ users|get_author(photo._author) }}</td>
+          <td><a href="/photo/{{ photo._id.toString() }}">/{{ photo._id.toString() }}</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock content %}
