@@ -7,6 +7,10 @@
   <form role="form" action="{{ action_url }}" method="post">
     <input type="hidden" name="_csrf" value="{{ csrf_token }}">
       {% autoescape false %}{{ form }}{% endautoescape %}
+    <div class="form-group">
+      <label for="image_upload">Image Upload</label>
+      <input type="file" name="image_upload" id="image_upload">
+    </div>
     <button class='btn btn-primary' type="submit">{{ header }}</button>
   </form>
   {% if exists %}

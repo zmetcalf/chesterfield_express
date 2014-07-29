@@ -1,5 +1,6 @@
 var model = require('./models/models'),
     async = require('async'),
+    fs = require('fs'),
     user_model = require('../user/models/models'),
     sanitize_html = require('sanitize-html'),
     forms = require('forms'),
@@ -14,7 +15,7 @@ exports.before = function(req, res, next) {
       req.session.user && req.session.user.is_staff) {
     var slug = req.params.photo_id;
     if (!slug) return next();
-    console.log(slug);
+
     model.Photo.findOne({ '_id': slug }, function(err, photo) {
       req.photo = photo;
       if (err) return console.log(err);
@@ -56,9 +57,9 @@ exports.list = function(req, res, next) {
 exports.edit = function(req, res, next) {
   res.render('update', {
     header: 'Edit Photo',
-    action_url: '/photo/' + req.photo.url_slug + '?_method=put',
+    action_url: '/photo/' + req.photo._id + '?_method=put',
     form: photo_form(req.photo).toHTML(bootstrap_field),
-    slug: req.photo.url_slug,
+    slug: req.photo._id,
     exists: true,
     csrf_token: req.csrfToken()
   });
@@ -126,16 +127,44 @@ exports.add = function(req, res, next) {
 exports.create = function(req, res, next) {
   photo_form().handle(req, {
     success: function(form) {
-      model.Photo.create({
-        title: sanitize_html(req.body.title),
-        post_date: req.body.post_date,
-        description: sanitize_html(req.body.description),
-        published: req.body.published,
-        _author: req.session.user._id,
-      }, function(err, photo) {
+      var photo_path = '';
+
+      async.series([
+        function(callback) {
+          model.Photo.create({
+            title: sanitize_html(req.body.title),
+            post_date: req.body.post_date,
+            description: sanitize_html(req.body.description),
+            published: req.body.published,
+            _author: req.session.user._id,
+          }, function(err, photo_content) {
+            if (err) return callback(err);
+            photo_path = photo_content._id
+            callback(null, photo_content)
+          });
+        },
+
+        function(callback) {
+          fs.readFile(req.body.image_upload.path, function(err, image_file) {
+            photo_path = __dirname + "/media/photos/" + photo_path;
+            fs.writeFile(photo_path, image_file,
+              function(err) {
+                if(err) return callback(err);
+                callback(null, photo_path);
+            });
+          });
+        }
+      ],
+
+      function(err, results) {
+        if(err) return console.log(err);
+        model.Photo.findOneAndUpdate({ _id: results[0]._id }, {
+          path: photo_path,
+        }, function(err, photo) {
           if(err) return console.log(err);
           req.session.success = 'Photo Created';
           res.redirect('/photo/' + photo._id + '/edit');
+        });
       });
     },
 
