@@ -59,7 +59,7 @@ exports.edit = function(req, res, next) {
     header: 'Edit Photo',
     action_url: '/photo/' + req.photo._id + '?_method=put',
     form: photo_form(req.photo).toHTML(bootstrap_field),
-    slug: req.photo._id,
+    slug: req.photo._id.toString(),
     exists: true,
     csrf_token: req.csrfToken()
   });
@@ -139,13 +139,13 @@ exports.create = function(req, res, next) {
             _author: req.session.user._id,
           }, function(err, photo_content) {
             if (err) return callback(err);
-            photo_path = photo_content._id
+            photo_path = photo_content._id.toString()
             callback(null, photo_content)
           });
         },
 
         function(callback) {
-          fs.readFile(req.body.image_upload.path, function(err, image_file) {
+          fs.readFile(req.body.image_upload, function(err, image_file) {
             photo_path = __dirname + "/media/photos/" + photo_path;
             fs.writeFile(photo_path, image_file,
               function(err) {

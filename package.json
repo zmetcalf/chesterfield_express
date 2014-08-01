@@ -19,7 +19,8 @@
     "underscore": "1.x",
     "bower": "1.x",
     "async": "0.x",
-    "sanitize-html": "1.x"
+    "sanitize-html": "1.x",
+    "connect-busboy": "0.x"
   },
 
   "devDependencies": {
