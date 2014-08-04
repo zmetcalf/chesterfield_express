@@ -60,7 +60,7 @@ exports.list = function(req, res, next) {
 exports.edit = function(req, res, next) {
   res.render('update', {
     header: 'Edit Photo',
-    action_url: '/photo/' + req.photo._id + '?_method=put',
+    action_url: '/photo/' + req.photo._id + '?_method=put&_csrf=' + req.csrfToken(),
     form: photo_form(req.photo).toHTML(bootstrap_field),
     slug: req.photo._id.toString(),
     exists: true,
@@ -90,7 +90,7 @@ exports.delete = function(req, res, next) {
 exports.update = function(req, res, next) {
   photo_form().handle(req, {
     success: function(form) {
-      model.Photo.findOneAndUpdate({ _id: req.photo.url_slug }, {
+      model.Photo.findOneAndUpdate({ _id: req.photo._id }, {
         title: sanitize_html(req.body.title),
         post_date: req.body.post_date,
         description: sanitize_html(req.body.description),
@@ -98,7 +98,7 @@ exports.update = function(req, res, next) {
       }, function(err, photo) {
           if(err) return console.log(err);
           req.session.success = 'Photo Updated';
-          res.redirect('/photo/' + photo._id + '/edit');
+          res.redirect('/photo/' + photo._id.toString() + '/edit');
       });
     },
 
@@ -120,7 +120,7 @@ exports.update = function(req, res, next) {
 exports.add = function(req, res, next) {
   res.render('update', {
     header: 'Create Photo',
-    action_url: '/photo',
+    action_url: '/photo?_csrf=' + req.csrfToken(),
     form: photo_form().toHTML(bootstrap_field),
     csrf_token: req.csrfToken()
   });
@@ -156,7 +156,7 @@ exports.create = function(req, res, next) {
         }, function(err, photo) {
           if (err) return console.log(err);
           req.session.success = 'Photo Created';
-          res.redirect('/photo/' + photo._id + '/edit');
+          res.redirect('/photo/' + photo._id.toString() + '/edit');
         });
       },
 

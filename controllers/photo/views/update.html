@@ -4,12 +4,15 @@
 
 {% block content %}
   {% autoescape false %}{{ message }}{% endautoescape %}
-  <form role="form" action="{{ action_url }}?_csrf={{ csrf_token }}" method="post" enctype="multipart/form-data">
+  <form role="form" action="{{ action_url }}" method="post"
+    {% if !exists %}enctype="multipart/form-data"{% endif %}>
       {% autoescape false %}{{ form }}{% endautoescape %}
+    {% if !exists %}
     <div class="form-group">
       <label for="image_upload">Image Upload</label>
       <input type="file" name="image_upload" id="image_upload">
     </div>
+    {% endif %}
     <button class='btn btn-primary' type="submit">{{ header }}</button>
   </form>
   {% if exists %}
