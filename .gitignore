@@ -29,3 +29,5 @@ node_modules
 
 # Ignore Bower Packages
 public/bower_components
+
+/media

@@ -7,6 +7,9 @@ var model = require('./models/models'),
     fields = forms.fields,
     validators = forms.validators,
     widgets = forms.widgets,
+    path = require('path'),
+    fs = require('fs'),
+    busboy = require('connect-busboy'),
     bootstrap_field = require('../../lib/forms').bootstrap_field;
 
 
@@ -125,33 +128,50 @@ exports.add = function(req, res, next) {
 
 
 exports.create = function(req, res, next) {
-  photo_form().handle(req, {
-    success: function(form) {
-      model.Photo.create({
-        title: sanitize_html(req.body.title),
-        post_date: req.body.post_date,
-        description: sanitize_html(req.body.description),
-        published: req.body.published,
-        _author: req.session.user._id,
-        path: req.image.path
-      }, function(err, photo) {
-        if (err) return callback(err);
-        req.session.success = 'Photo Created';
-        res.redirect('/photo/' + photo._id + '/edit');
-      });
-    },
-
-    error: function(form) {
-      res.render('update', {
-        header: 'Create Photo',
-        form: form.toHTML(bootstrap_field),
-        csrf_token: req.csrfToken()
-      });
-    },
-
-    empty: function(form) {
-      res.redirect('/create_photo');
+  req.busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
+    if (fieldname === 'image_upload') {
+      if (mimetype === 'image/jpeg' || mimetype === 'image/png') {
+        // TODO add prevention of overwriting files
+        var save_to = path.join(__dirname, '../../media/', filename);
+        file.pipe(fs.createWriteStream(save_to));
+        req.image = { path: save_to }
+      }
     }
+  });
+
+  req.busboy.on('field', function(fieldname, val, fieldnamTruncated, valTruncated) {
+    req.body[fieldname] = val;
+  });
+
+  req.busboy.on('finish', function() {
+    photo_form().handle(req, {
+      success: function(form) {
+        model.Photo.create({
+          title: sanitize_html(req.body.title),
+          post_date: req.body.post_date,
+          description: sanitize_html(req.body.description),
+          published: req.body.published,
+          _author: req.session.user._id,
+          path: req.image.path
+        }, function(err, photo) {
+          if (err) return console.log(err);
+          req.session.success = 'Photo Created';
+          res.redirect('/photo/' + photo._id + '/edit');
+        });
+      },
+
+      error: function(form) {
+        res.render('update', {
+          header: 'Create Photo',
+          form: form.toHTML(bootstrap_field),
+          csrf_token: req.csrfToken()
+        });
+      },
+
+      empty: function(form) {
+        res.redirect('/create_photo');
+      }
+    });
   });
 }
 

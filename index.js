@@ -3,7 +3,6 @@ var express = require('express'),
   session = require('express-session'),
   bodyParser = require('body-parser'),
   busboy = require('connect-busboy'),
-  file_handler = require('./lib/file_handler'),
   csrf = require('csurf'),
   helmet = require('helmet'),
   methodOverride = require('method-override'),
@@ -115,7 +114,6 @@ app.use(function(req, res, next){
 
 // File Handling
 app.use(busboy({ immediate: true }));
-app.use(file_handler());
 
 // Context processors for templates - Must come after session - before controllers
 app.use(context_processors());
