@@ -71,7 +71,11 @@ exports.edit = function(req, res, next) {
 
 
 exports.show = function(req, res, next) {
-  res.sendfile(path.resolve(req.photo.path));
+  res.render('show', {
+    message: res.locals.message,
+    photo: req.photo,
+    photo_path: path.basename(req.photo.path),
+  });
 }
 
 

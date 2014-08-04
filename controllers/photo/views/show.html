@@ -2,4 +2,7 @@
 
 {% block content_heading %}{{ photo.title }}{% endblock %}
 
-{% block content %}{% endblock %}
+{% block content %}
+  {% autoescape false %}{{ photo.description }}{% endautoescape %}
+  <img src="/media/{{ photo_path }}" class="img-responsive">
+{% endblock %}

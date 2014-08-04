@@ -8,7 +8,6 @@ var photo_schema = mongoose.Schema({
   published: Boolean,
   path: String,
   _author: { type: Schema.Types.ObjectId, ref: 'User' },
-  _studios: [ { type: Schema.Types.ObjectId, ref: 'Gallery' } ],
 });
 
 var Photo = exports.Photo = mongoose.model('Photo', photo_schema);
