@@ -4,8 +4,7 @@
 
 {% block content %}
   {% autoescape false %}{{ message }}{% endautoescape %}
-  <form role="form" action="{{ action_url }}" method="post">
-    <input type="hidden" name="_csrf" value="{{ csrf_token }}">
+  <form role="form" action="{{ action_url }}?_csrf={{ csrf_token }}" method="post" enctype="multipart/form-data">
       {% autoescape false %}{{ form }}{% endautoescape %}
     <div class="form-group">
       <label for="image_upload">Image Upload</label>
