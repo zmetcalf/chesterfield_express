@@ -4,6 +4,7 @@
 
 {% block content %}
   {% autoescape false %}{{ message }}{% endautoescape %}
+  {% if exists %}<img src="/media/{{ photo }}" class="img-responsive">{% endif %}
   <form role="form" action="{{ action_url }}" method="post"
     {% if !exists %}enctype="multipart/form-data"{% endif %}>
       {% autoescape false %}{{ form }}{% endautoescape %}

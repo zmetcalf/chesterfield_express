@@ -62,6 +62,7 @@ exports.edit = function(req, res, next) {
     header: 'Edit Photo',
     action_url: '/photo/' + req.photo._id + '?_method=put&_csrf=' + req.csrfToken(),
     form: photo_form(req.photo).toHTML(bootstrap_field),
+    photo: path.basename(req.photo.path),
     slug: req.photo._id.toString(),
     exists: true,
     csrf_token: req.csrfToken()
@@ -70,10 +71,7 @@ exports.edit = function(req, res, next) {
 
 
 exports.show = function(req, res, next) {
-  res.render('show', {
-    message: res.locals.message,
-    photo: req.photo,
-  });
+  res.sendfile(path.resolve(req.photo.path));
 }
 
 
@@ -129,6 +127,9 @@ exports.add = function(req, res, next) {
 
 exports.create = function(req, res, next) {
   req.busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
+    if (filename === '') {
+      file.resume();
+    }
     if (fieldname === 'image_upload') {
       if (mimetype === 'image/jpeg' || mimetype === 'image/png') {
         // TODO add prevention of overwriting files
