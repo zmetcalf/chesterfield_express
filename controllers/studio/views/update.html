@@ -3,17 +3,23 @@
 {% block page_header %}{{ header }}{% endblock %}
 
 {% block content %}
-  {% autoescape false %}{{ message }}{% endautoescape %}
-  <form role="form" action="{{ action_url }}" method="post">
-    <input type="hidden" name="_csrf" value="{{ csrf_token }}">
-      {% autoescape false %}{{ form }}{% endautoescape %}
-    <button class='btn btn-primary' type="submit">{{ header }}</button>
-  </form>
-  {% if exists %}
-  <br>
-  <form role="form" action="/studio/{{ slug }}?_method=delete" method="post">
-    <input type="hidden" name="_csrf" value="{{ csrf_token }}">
-    <button class='btn btn-danger' type="submit">Delete Studio</button>
-  </form>
-  {% endif %}
+  <div ng-app='studio'>
+    {% autoescape false %}{{ message }}{% endautoescape %}
+    <form role="form" action="{{ action_url }}" method="post">
+      <input type="hidden" name="_csrf" value="{{ csrf_token }}">
+        {% autoescape false %}{{ form }}{% endautoescape %}
+      <button class='btn btn-primary' type="submit">{{ header }}</button>
+    </form>
+    {% if exists %}
+    <br>
+    <div ng-controller="PhotoSelectModalCtl">
+      <button class="btn btn-default" ng-click="open()">Add Photos</button>
+    </div>
+    <form role="form" action="/studio/{{ slug }}?_method=delete" method="post">
+      <br>
+      <input type="hidden" name="_csrf" value="{{ csrf_token }}">
+      <button class='btn btn-danger' type="submit">Delete Studio</button>
+    </form>
+    {% endif %}
+  </div>
 {% endblock %}
