@@ -18,5 +18,18 @@ exports.before = function(req, res, next) {
 
 
 exports.show = function(req, res, next) {
+  // TODO add JSON exploit prevention
+  // Not 100% necessary since this will just deliver
+  // a list of photo urls associated with the studio
   res.json(req.studio._photos);
+}
+
+
+exports.update = function(req, res, next) {
+  model.Studio.findOneAndUpdate({ _id: req.photo._id }, {
+    _photo: []
+  }, function(err, studio) {
+    if(err) return console.log(err);
+    res.json({ updated: true });
+  });
 }
