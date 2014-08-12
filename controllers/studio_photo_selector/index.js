@@ -18,10 +18,8 @@ exports.before = function(req, res, next) {
 
 
 exports.show = function(req, res, next) {
-  // TODO add JSON exploit prevention
-  // Not 100% necessary since this will just deliver
-  // a list of photo urls associated with the studio
-  res.json(req.studio._photos);
+  res.send(")]}',\n[" + req.studio._photos + ']'); // Angular JSON protection
+  // res.json(req.studio._photos);
 }
 
 

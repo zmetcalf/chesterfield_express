@@ -4,7 +4,7 @@ var assert = require('chai').assert,
     cheerio = require('cheerio'),
     request = require('supertest'),
     mongoose = require('mongoose'),
-    db_opts = require('../../../config/db');
+    db_opts = require('../../../config/db'),
     user_model = require('../../../controllers/user/models/models'),
     photo_model = require('../../../controllers/photo/models/models'),
     model = require('../../../controllers/studio/models/models');
@@ -129,6 +129,9 @@ describe('Studio Photo Selector', function() {
         user_model.User.remove({}).exec(callback);
       },
       function(callback) {
+        photo_model.Photo.remove({}).exec(callback);
+      },
+      function(callback) {
         server
         .post('/logout')
         .end(function(err, res) {
@@ -144,8 +147,10 @@ describe('Studio Photo Selector', function() {
       if (err) return console.log(err);
       server
         .get('/studio_photo_selector/' + studio._id.toString())
-        .expect('[\n  "' + photo_one._id.toString() + '",\n  "' +
-                photo_two._id.toString() + '"\n]')
+        //.expect('[\n  "' + photo_one._id.toString() + '",\n  "' +
+        //        photo_two._id.toString() + '"\n]') // Non-angular JSON
+        .expect(")]}',\n[" + photo_one._id.toString() + ',' +
+          photo_two._id.toString() +  ']')
         .expect(200, done);
     });
   });
