@@ -1,10 +1,11 @@
 var assert = require('chai').assert,
     async = require('async'),
     request = require('supertest'),
+    hash = require('pwd').hash,
     mongoose = require('mongoose'),
     cheerio = require('cheerio'),
     user_model = require('../../../controllers/user/models/models'),
-    model = require('../../../controllers/content/models/models');
+    model = require('../../../controllers/content/models/models'),
     db_opts = require('../../../config/db');
 
 if(!mongoose.connection.readyState) {
@@ -16,39 +17,64 @@ var app = require('../../../index');
 var server = request.agent(app);
 var csrf = '';
 
-// Skipping - too fragile to maintain
-describe.skip('Content Authentication', function() {
+describe('Content Authentication', function() {
   beforeEach(function(done) {
-    user_model.User.create({
-      first_name: 'Test',
-      last_name: 'User',
-      username: 'auth_user',
-      is_staff: true,
-      hash: 'fpIO7HOtq3FsYAOW9giPQAqfm0QXhB1tR7RDv9RVrch2wKURPlUJUg4YZmfISdXW1nzUP+P1ZXA6xIxQLrHldAC2WVfj7HrAOeERleGmIRxc4Jb0hCE9ObKLQa9rQZKfGJf9EhW+vunWAujXdt+bfAqj2px7oIhqFdPCN1guIhg=',
-      salt: 'WlSDOruUy6E+o3KPr/QbzHaAGa4+25+07TzIyhZj5tkANxal0Slx47CpLZo9FbvH59lys4SOqyDQwjbtbVstMqzcLkcoaMD/2tr51CIlkjsy5Wr38W7aNx8PXPT/JcV31cZBBBs95MeOBXeJc6FKuuqTU55U3p0gOp4MzUKeReg='
-    }, function(err, user) {
-      if(err) return console.log(err);
-      model.Content.create({
-        title: 'Title',
-        summary: 'Summary',
-        content: 'Content',
-        published: true,
-        _author: user._id,
-        seo_keywords: 'seo_key',
-        seo_description: 'seo_descript',
-        url_slug: 'blog'
-      }, function(err, content) {
-        if(err) return console.log(err);
-        done();
-      });
-    });
+    var user = null;
+    var local_hash = '';
+    var local_salt = '';
+
+    async.series([
+      function(callback) {
+        hash('foobar', function(err, _salt, _hash) {
+          if(err) return console.log(err);
+          local_hash = _hash;
+          local_salt = _salt;
+          callback(null);
+        });
+      },
+
+      function(callback) {
+        user_model.User.create({
+          first_name: 'Test',
+          last_name: 'User',
+          username: 'auth_user',
+          is_staff: true,
+          hash: local_hash,
+          salt: local_salt
+        }, function(err, new_user) {
+          if(err) return console.log(err);
+          user = new_user;
+          callback(null, user);
+        });
+      },
+
+      function(callback) {
+        model.Content.create({
+          title: 'Title',
+          summary: 'Summary',
+          content: 'Content',
+          published: true,
+          _author: user._id,
+          seo_keywords: 'seo_key',
+          seo_description: 'seo_descript',
+          url_slug: 'blog'
+        }, function(err, content) {
+          if(err) return console.log(err);
+          callback(null, content);
+        });
+      },
+    ], function(err, results) { done(); });
   });
 
-  afterEach(function() {
-    var q = model.Content.remove({});
-    q.exec();
-    q = user_model.User.remove({});
-    q.exec();
+  afterEach(function(done) {
+    async.series([
+      function(callback) {
+        model.Content.remove({}).exec(callback);
+      },
+      function(callback) {
+        user_model.User.remove({}).exec(callback);
+      }
+    ], function (err, results) { done(); });
   });
 
   describe('Unauthenticated', function() {
@@ -95,6 +121,7 @@ describe.skip('Content Authentication', function() {
         function(callback) {
           server
           .put('/content/blog')
+          .set('Content-Type', 'application/x-www-form-urlencoded')
           .send({ title: 'tiTLE', _csrf: csrf })
           .expect('Location', '/login')
           .expect(302)
@@ -124,6 +151,7 @@ describe.skip('Content Authentication', function() {
         function(callback) {
           server
           .put('/content/blog')
+          .set('Content-Type', 'application/x-www-form-urlencoded')
           .send({ title: 'tiTLE', _csrf: csrf })
           .expect('Location', '/login')
           .expect(302)
@@ -153,6 +181,7 @@ describe.skip('Content Authentication', function() {
         function(callback) {
           server
           .delete('/content/blog')
+          .set('Content-Type', 'application/x-www-form-urlencoded')
           .send({ _csrf: csrf })
           .expect('Location', '/login')
           .expect(302)
@@ -185,6 +214,7 @@ describe.skip('Content Authentication', function() {
         function(callback) {
           server
             .post('/login')
+            .set('Content-Type', 'application/x-www-form-urlencoded')
             .send({ username: 'auth_user', password: 'foobar', _csrf: csrf })
             .end(function(err, res) {
               if(err) console.log(err);
@@ -246,6 +276,7 @@ describe.skip('Content Authentication', function() {
         function(callback) {
           server
           .put('/content/blog')
+          .set('Content-Type', 'application/x-www-form-urlencoded')
           .send({ title: 'tiTLE', _csrf: csrf })
           .expect(200, /tiTLE/)
           .end(function(err, res) {
@@ -274,6 +305,7 @@ describe.skip('Content Authentication', function() {
         function(callback) {
           server
           .put('/content/blog')
+          .set('Content-Type', 'application/x-www-form-urlencoded')
           .send({ title: 'tiTLE', _csrf: csrf })
           .expect(200, /tiTLE/)
           .end(function(err, res) {
@@ -302,6 +334,7 @@ describe.skip('Content Authentication', function() {
         function(callback) {
           server
           .delete('/content/blog')
+          .set('Content-Type', 'application/x-www-form-urlencoded')
           .send({ _csrf: csrf })
           .expect('Location', '/contents')
           .expect(302)
