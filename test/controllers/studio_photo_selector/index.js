@@ -149,8 +149,8 @@ describe('Studio Photo Selector', function() {
         .get('/studio_photo_selector/' + studio._id.toString())
         //.expect('[\n  "' + photo_one._id.toString() + '",\n  "' +
         //        photo_two._id.toString() + '"\n]') // Non-angular JSON
-        .expect(")]}',\n[" + photo_one._id.toString() + ',' +
-          photo_two._id.toString() +  ']')
+        .expect(")]}',\n{" + '"photos":' + JSON.stringify([photo_one._id.toString(),
+          photo_two._id.toString()]) +  '}')
         .expect(200, done);
     });
   });

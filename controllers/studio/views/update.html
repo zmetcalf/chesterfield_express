@@ -3,7 +3,7 @@
 {% block page_header %}{{ header }}{% endblock %}
 
 {% block content %}
-  <div ng-app='studio'>
+  <div ng-app='studio_controllers'>
     {% autoescape false %}{{ message }}{% endautoescape %}
     <form role="form" action="{{ action_url }}" method="post">
       <input type="hidden" name="_csrf" value="{{ csrf_token }}">
@@ -12,7 +12,7 @@
     </form>
     {% if exists %}
     <br>
-    <div ng-controller="PhotoSelectModalCtl">
+    <div ng-controller="PhotoSelectModalCtrl">
       <button class="btn btn-default" ng-click="open()">Add Photos</button>
     </div>
     <form role="form" action="/studio/{{ slug }}?_method=delete" method="post">

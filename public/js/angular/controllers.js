@@ -1,18 +1,23 @@
-angular.module('studio', [ 'ui.bootstrap' ]);
+var studio_controllers = angular.module('studio_controllers',
+  [ 'ui.bootstrap', 'studio_services' ]);
 
-var PhotoSelectModalCtl = function ($scope, $modal, $log) {
 
-  $scope.open = function () {
-    var modalInstance = $modal.open({
-      templateUrl: '/js/angular/templates/photo_select_modal.html',
-      controller: ModalInstanceCtrl,
-    });
-  };
-};
+studio_controllers.controller('PhotoSelectModalCtrl',
+  [ '$scope', '$modal', 'photos', function ($scope, $modal, photos) {
 
-var ModalInstanceCtrl = function ($scope, $modalInstance) {
+    $scope.open = function () {
+      var modalInstance = $modal.open({
+        templateUrl: '/js/angular/templates/photo_select_modal.html',
+        controller: ModalInstanceCtrl,
+        resolve: photos.get_photos()
+      });
+    };
+}]);
+
+var ModalInstanceCtrl = function ($scope, $modalInstance, photos) {
 
   $scope.ok = function () {
+    photos.update_photos();
     $modalInstance.close();
   };
 

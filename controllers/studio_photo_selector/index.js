@@ -6,11 +6,11 @@ exports.before = function(req, res, next) {
     if (!slug) return next();
 
     model.Studio.findOne({ '_id': slug }, function(err, studio) {
-      req.studio = studio;
-      if (err) return console.log(err);
-      if (!studio) return next('route');
-      next();
-    });
+        req.studio = studio;
+        if (err) return console.log(err);
+        if (!studio) return next('route');
+        next();
+      });
   } else {
     res.json(null);
   }
@@ -18,7 +18,7 @@ exports.before = function(req, res, next) {
 
 
 exports.show = function(req, res, next) {
-  res.send(")]}',\n[" + req.studio._photos + ']'); // Angular JSON protection
+  res.send(")]}',\n{" + '"photos":' + JSON.stringify(req.studio._photos) + '}'); // Angular JSON protection
   // res.json(req.studio._photos);
 }
 

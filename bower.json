@@ -5,6 +5,7 @@
     "bootstrap": "3.x",
     "tinymce-dist": "4.x",
     "angular": "1.2.x",
-    "angular-bootstrap": "0.x"
+    "angular-bootstrap": "0.x",
+    "angular-route": "1.2.x"
   }
 }
