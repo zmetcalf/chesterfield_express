@@ -147,10 +147,8 @@ describe('Studio Photo Selector', function() {
       if (err) return console.log(err);
       server
         .get('/studio_photo_selector/' + studio._id.toString())
-        //.expect('[\n  "' + photo_one._id.toString() + '",\n  "' +
-        //        photo_two._id.toString() + '"\n]') // Non-angular JSON
-        .expect(")]}',\n{" + '"photos":' + JSON.stringify([photo_one._id.toString(),
-          photo_two._id.toString()]) +  '}')
+        .expect(/Photo One/)
+        .expect(/Photo Two/)
         .expect(200, done);
     });
   });

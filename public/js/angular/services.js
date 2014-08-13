@@ -4,7 +4,7 @@ studio_services.factory('photos', [ '$http', function($http) {
   var get_photos = function() {
     return $http.get('/studio_photo_selector/' +
       angular.element('#id_id').val()).success(function(data) {
-        alert(data);
+        alert(data.all_photos);
       });
   }
 

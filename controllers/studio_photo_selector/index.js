@@ -1,4 +1,5 @@
-var model = require('../studio/models/models');
+var model = require('../studio/models/models'),
+    photo_model = require('../photo/models/models');
 
 exports.before = function(req, res, next) {
   if (req.session.user && req.session.user.is_staff) {
@@ -6,11 +7,11 @@ exports.before = function(req, res, next) {
     if (!slug) return next();
 
     model.Studio.findOne({ '_id': slug }, function(err, studio) {
-        req.studio = studio;
-        if (err) return console.log(err);
-        if (!studio) return next('route');
-        next();
-      });
+      req.studio = studio;
+      if (err) return console.log(err);
+      if (!studio) return next('route');
+      next();
+    });
   } else {
     res.json(null);
   }
@@ -18,8 +19,12 @@ exports.before = function(req, res, next) {
 
 
 exports.show = function(req, res, next) {
-  res.send(")]}',\n{" + '"photos":' + JSON.stringify(req.studio._photos) + '}'); // Angular JSON protection
-  // res.json(req.studio._photos);
+  photo_model.Photo.find({}, 'title description path', function(err, photos) {
+    if (err) return console.log(err);
+    var all_photos = '"all_photos":' + JSON.stringify(photos);
+    var studio_photos = '"studio_photos":' + JSON.stringify(req.studio._photos);
+    res.send(")]}',\n{" + studio_photos + ',' + all_photos + '}'); // Angular JSON protection
+  });
 }
 
 
