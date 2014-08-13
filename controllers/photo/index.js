@@ -62,7 +62,7 @@ exports.edit = function(req, res, next) {
     header: 'Edit Photo',
     action_url: '/photo/' + req.photo._id + '?_method=put&_csrf=' + req.csrfToken(),
     form: photo_form(req.photo).toHTML(bootstrap_field),
-    photo: path.basename(req.photo.path),
+    photo: req.photo.path,
     slug: req.photo._id.toString(),
     exists: true,
     csrf_token: req.csrfToken()
@@ -74,7 +74,7 @@ exports.show = function(req, res, next) {
   res.render('show', {
     message: res.locals.message,
     photo: req.photo,
-    photo_path: path.basename(req.photo.path),
+    photo_path: req.photo.path,
   });
 }
 
@@ -157,7 +157,7 @@ exports.create = function(req, res, next) {
           description: sanitize_html(req.body.description),
           published: req.body.published,
           _author: req.session.user._id,
-          path: req.image.path
+          path: path.basename(req.image.path),
         }, function(err, photo) {
           if (err) return console.log(err);
           req.session.success = 'Photo Created';

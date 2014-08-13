@@ -1,7 +1,7 @@
 var studio_services = angular.module('studio_services', []);
 
-studio_services.factory('photos', [ '$http', '$filter',
-  function($http, $filter) {
+studio_services.factory('photos', [ '$http',
+  function($http) {
     var get_photos = function() {
       return $http.get('/studio_photo_selector/' +
         angular.element('#id_id').val()).success(function(data) {
