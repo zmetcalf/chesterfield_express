@@ -7,6 +7,5 @@
     "angular": "1.2.x",
     "angular-bootstrap": "0.x",
     "angular-route": "1.2.x",
-    "underscore": "1.x"
   }
 }
