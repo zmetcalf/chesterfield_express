@@ -9,16 +9,23 @@ studio_controllers.controller('PhotoSelectModalCtrl',
       var modalInstance = $modal.open({
         templateUrl: '/js/angular/templates/photo_select_modal.html',
         controller: ModalInstanceCtrl,
-        resolve: photos.get_photos()
+        resolve: { photos: photos.get_photos }
       });
+
+      modalInstance.result.then(function(selected_photos) {
+        photos.update_photos();
+      });
+
     };
 }]);
 
 var ModalInstanceCtrl = function ($scope, $modalInstance, photos) {
+  $scope.photos = photos.all_photos;
+
+  $scope.selected = photos.studio_photos;
 
   $scope.ok = function () {
-    photos.update_photos();
-    $modalInstance.close();
+    $modalInstance.close($scope.selected.photos);
   };
 
   $scope.cancel = function () {
