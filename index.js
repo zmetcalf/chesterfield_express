@@ -80,12 +80,27 @@ app.use(session({
 
 // parse request bodies (req.body)
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 // override methods (put, delete)
 app.use(methodOverride('_method'));
 
 // Initialize CSRF
-app.use(csrf());
+var csrfValue = function(req) {
+  var token = (req.body && req.body._csrf)
+    || (req.query && req.query._csrf)
+    || (req.headers['x-csrf-token'])
+    || (req.headers['x-xsrf-token']);
+  return token;
+};
+
+app.use(csrf({value: csrfValue}));
+
+// Angular CSRF Token
+app.use(function(req, res, next) {
+  res.cookie('XSRF-TOKEN', req.csrfToken());
+  next();
+});
 
 // expose the "messages" local variable when views are rendered
 app.use(function(req, res, next){

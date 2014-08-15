@@ -10,7 +10,8 @@
              alt="{{ photo.title }}">
         <div class="checkbox">
           <label>
-            <input type="checkbox" value="{{ photo._id }}">
+            <input type="checkbox" value="{{ photo._id }}" ng-model="selected[photo._id]"
+                   ng-checked="photo.selected">
             Select Photo
           </label>
         </div>

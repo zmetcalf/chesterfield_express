@@ -12,49 +12,67 @@ studio_controllers.controller('PhotoSelectModalCtrl',
         controller: ModalInstanceCtrl,
         size: 'lg',
         resolve: {
-          photo_group: function() {
-            return $filter('group')(photos.get_photos(), 3);
+          photo_object: function() {
+            return $filter('view_prep')(photos.get_photos(), 3);
           }
         }
       });
 
       modalInstance.result.then(function(selected_photos) {
-        photos.update_photos();
+        var photo_array = [];
+        angular.forEach(selected_photos, function(value, key) {
+          if (value) {
+            photo_array.push(key);
+          }
+        });
+        photos.update_photos(photo_array);
       });
 
     };
 }]);
 
-studio_controllers.filter('group', function() {
+studio_controllers.filter('view_prep', function() {
   return function(items, groupItems) {
     if (items) {
       var newArray = [];
+      var selected = {};
 
+      // Prepare Selected Items
+      angular.forEach(items.all_photos, function(photo) {
+        angular.forEach(items.studio_photos, function(selected_photo) {
+          if(angular.equals(photo._id, selected_photo)) {
+            photo.selected = true;
+            selected[photo._id] = true;
+          } else {
+            photo.selected = false;
+          }
+        });
+      });
+
+      // Group for bootstrap rows
       for (var i = 0; i < items.all_photos.length; i+=groupItems) {
         if (i + groupItems > items.all_photos.length) {
             newArray.push(items.all_photos.slice(i));
         } else {
             newArray.push(items.all_photos.slice(i, i + groupItems));
         }
-        angular.forEach(items.studio_photos, function(selected_photo) {
-          if(angular.equals(items.all_photos[i]._id, selected_photo)) {
-            items.all_photos[i].selected = true;
-          } else {
-            items.all_photos[i].selected = false;
-          }
-        });
       }
 
-      return newArray;
+      return {
+        photo_group: newArray,
+        selected: selected
+      };
     }
   };
 });
 
-var ModalInstanceCtrl = function ($scope, $modalInstance, photo_group) {
-  $scope.photo_group = photo_group;
+var ModalInstanceCtrl = function ($scope, $modalInstance, photo_object) {
+  $scope.photo_group = photo_object.photo_group;
+
+  $scope.selected = photo_object.selected;
 
   $scope.ok = function () {
-    $modalInstance.close($scope.selected.photos);
+    $modalInstance.close($scope.selected);
   };
 
   $scope.cancel = function () {

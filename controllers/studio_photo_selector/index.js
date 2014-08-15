@@ -1,5 +1,6 @@
 var model = require('../studio/models/models'),
-    photo_model = require('../photo/models/models');
+    photo_model = require('../photo/models/models'),
+    _ = require('underscore');
 
 exports.before = function(req, res, next) {
   if (req.session.user && req.session.user.is_staff) {
@@ -29,10 +30,16 @@ exports.show = function(req, res, next) {
 
 
 exports.update = function(req, res, next) {
-  model.Studio.findOneAndUpdate({ _id: req.photo._id }, {
-    _photo: []
-  }, function(err, studio) {
+  model.Studio.findOne({ _id: req.studio._id }, '_photos', function(err, studio) {
     if(err) return console.log(err);
-    res.json({ updated: true });
+    _.each(req.body, function(selected_photo) {
+      if (!_.find(studio._photos, function(photo) { return photo.equals(selected_photo); })) {
+        studio._photos.push(selected_photo);
+      }
+    });
+    studio.save(function (err) {
+      if (err) return console.log(err);
+      res.json({ updated: true });
+    });
   });
 }
