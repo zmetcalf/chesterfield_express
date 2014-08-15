@@ -16,11 +16,13 @@ exports.before = function(req, res, next) {
     var slug = req.params.studio_id;
     if (!slug) return next();
 
-    model.Studio.findOne({ 'url_slug': slug }, function(err, studio) {
-      req.studio = studio;
-      if (err) return console.log(err);
-      if (!studio) return next('route');
-      next();
+    model.Studio.findOne({ 'url_slug': slug })
+      .populate('_photos')
+      .exec(function(err, studio) {
+        req.studio = studio;
+        if (err) return console.log(err);
+        if (!studio) return next('route');
+        next();
     });
   } else {
     req.session.error = 'Access denied!';

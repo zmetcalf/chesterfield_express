@@ -2,4 +2,24 @@
 
 {% block content_heading %}{{ studio.title }}{% endblock %}
 
-{% block content %}{{ content.title }}{% endblock %}
+{% block content %}
+  <div class="container col-md-12" ng-controller="PhotoModalCtrl">
+  {% for photo in studio._photos %}
+    {% if loop.index0 % 3 == 0 %}
+    <div class="row">
+    {% endif %}
+      <div class="col-md-3">
+        <p>{{ photo.title }}</p>
+        <img src="/media/{{ photo.path }}" class="img-thumbnail"
+             ng-click="open('{{ photo._id.toString() }}') alt="{{ photo.title }}">
+      </div>
+    {% if loop.index0 % 3 == 2 or loop.last %}
+    </div>
+    {% endif %}
+  {% endfor %}
+  </div>
+{% endblock %}
+
+{% block js_scripts %}
+  <script src="/js/angular/pages/controllers.js"></script>
+{% endblock %}

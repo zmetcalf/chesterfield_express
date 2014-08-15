@@ -21,6 +21,7 @@
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+    {% block css_files %}{% endblock %}
   </head>
 
 
@@ -71,8 +72,8 @@
       <div class="page-header">
         <h1>{% block  content_heading %}{% endblock %}</h1>
       </div>
-      <p class="lead">{% block content %}{% endblock %}</p>
-       {% block call_to_action %}{% endblock %}
+        {% block content %}{% endblock %}
+        {% block call_to_action %}{% endblock %}
     </div>
 
     <div id="footer">
@@ -85,6 +86,10 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="/bower_components/jquery/dist/jquery.min.js"></script>
-    <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/bower_components/angular/angular.js"></script>
+    <script src="/bower_components/angular-route/angular-route.min.js"></script>
+    <script src="/bower_components/angular-bootstrap/ui-bootstrap.min.js"></script>
+    <script src="/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+    {% block js_scripts %}{% endblock %}
   </body>
 </html>

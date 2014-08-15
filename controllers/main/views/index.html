@@ -2,7 +2,9 @@
 
 {% block content_heading %}{{ content_heading }}{% endblock %}
 
-{% block content %}{{ content }}{% endblock %}
+{% block content %}
+  {% autoescape false %}{{ content }}{% endautoescape %}
+{% endblock %}
 
 {% block call_to_action %}
   {% if call_to_action %}
