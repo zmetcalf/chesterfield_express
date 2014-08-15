@@ -3,11 +3,17 @@
 </div>
 <div class="modal-body row">
   <div class="container col-md-12">
-    <div class="row" ng-repeat"photos in photo_group">
+    <div class="row" ng-repeat="photos in photo_group">
       <div class="col-md-4" ng-repeat="photo in photos">
         <p>{{ photo.title }}</p>
         <img ng-src="/media/{{ photo.path }}" class="img-thumbnail"
              alt="{{ photo.title }}">
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" value="{{ photo._id }}">
+            Select Photo
+          </label>
+        </div>
       </div>
     </div>
   </div>

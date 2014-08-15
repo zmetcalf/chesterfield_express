@@ -3,14 +3,19 @@ var studio_controllers = angular.module('studio_controllers',
 
 
 studio_controllers.controller('PhotoSelectModalCtrl',
-  [ '$scope', '$modal', 'photos', function ($scope, $modal, photos) {
+  [ '$scope', '$modal', '$filter', 'photos',
+  function ($scope, $modal, $filter, photos) {
 
     $scope.open = function () {
       var modalInstance = $modal.open({
         templateUrl: '/js/angular/templates/photo_select_modal.html',
         controller: ModalInstanceCtrl,
         size: 'lg',
-        resolve: { photos: photos.get_photos }
+        resolve: {
+          photo_group: function() {
+            return $filter('group')(photos.get_photos(), 3);
+          }
+        }
       });
 
       modalInstance.result.then(function(selected_photos) {
@@ -20,23 +25,33 @@ studio_controllers.controller('PhotoSelectModalCtrl',
     };
 }]);
 
-var ModalInstanceCtrl = function ($scope, $modalInstance, photos) {
-  $scope.photo_group = [];
+studio_controllers.filter('group', function() {
+  return function(items, groupItems) {
+    if (items) {
+      var newArray = [];
 
-  $scope.photos = photos.all_photos;
-
-  if (photos.all_photos) {
-
-      for (var i = 0; i < photos.all_photos.length; i+=3) {
-          if (i + 3 > photos.all_photos.length) {
-              $scope.photo_group.push(photos.all_photos.slice(i));
+      for (var i = 0; i < items.all_photos.length; i+=groupItems) {
+        if (i + groupItems > items.all_photos.length) {
+            newArray.push(items.all_photos.slice(i));
+        } else {
+            newArray.push(items.all_photos.slice(i, i + groupItems));
+        }
+        angular.forEach(items.studio_photos, function(selected_photo) {
+          if(angular.equals(items.all_photos[i]._id, selected_photo)) {
+            items.all_photos[i].selected = true;
           } else {
-              $scope.photo_group.push(photos.all_photos.slice(i, i + 3));
+            items.all_photos[i].selected = false;
           }
+        });
       }
-  }
-  console.log($scope.photo_group);
-  $scope.selected = photos.studio_photos;
+
+      return newArray;
+    }
+  };
+});
+
+var ModalInstanceCtrl = function ($scope, $modalInstance, photo_group) {
+  $scope.photo_group = photo_group;
 
   $scope.ok = function () {
     $modalInstance.close($scope.selected.photos);
