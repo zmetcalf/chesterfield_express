@@ -27,7 +27,6 @@ studio_controllers.controller('PhotoSelectModalCtrl',
         });
         photos.update_photos(photo_array);
       });
-
     };
 }]);
 
@@ -39,12 +38,11 @@ studio_controllers.filter('view_prep', function() {
 
       // Prepare Selected Items
       angular.forEach(items.all_photos, function(photo) {
+        photo.selected = false;
         angular.forEach(items.studio_photos, function(selected_photo) {
           if(angular.equals(photo._id, selected_photo)) {
             photo.selected = true;
             selected[photo._id] = true;
-          } else {
-            photo.selected = false;
           }
         });
       });

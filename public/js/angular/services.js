@@ -24,7 +24,9 @@ studio_services.factory('photos', [ '$http',
     var update_photos = function(selected_photos) {
       return $http.put('/studio_photo_selector/' +
         angular.element('#id_id').val(),
-        selected_photos);
+        selected_photos).success(function() {
+          request_photos();
+        });
     }
 
     return {
