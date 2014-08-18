@@ -7,25 +7,31 @@ studio_controllers.controller('PhotoSelectModalCtrl',
   function ($scope, $modal, $filter, photos) {
 
     $scope.open = function () {
-      var modalInstance = $modal.open({
-        templateUrl: '/js/angular/admin/templates/photo_select_modal.html',
-        controller: ModalInstanceCtrl,
-        size: 'lg',
-        resolve: {
-          photo_object: function() {
-            return $filter('view_prep')(photos.get_photos(), 3);
-          }
-        }
-      });
+      photos.get_photos().success(function(data) {
+        var photo_object = $filter('view_prep')(
+          {
+            all_photos: data.all_photos,
+            studio_photos: data.studio_photos
+          }, 3);
 
-      modalInstance.result.then(function(selected_photos) {
-        var photo_array = [];
-        angular.forEach(selected_photos, function(value, key) {
-          if (value) {
-            photo_array.push(key);
+        var modalInstance = $modal.open({
+          templateUrl: '/js/angular/admin/templates/photo_select_modal.html',
+          controller: ModalInstanceCtrl,
+          size: 'lg',
+          resolve: {
+            photo_object: function() { return photo_object; }
           }
         });
-        photos.update_photos(photo_array);
+
+        modalInstance.result.then(function(selected_photos) {
+          var photo_array = [];
+          angular.forEach(selected_photos, function(value, key) {
+            if (value) {
+              photo_array.push(key);
+            }
+          });
+          photos.update_photos(photo_array);
+        });
       });
     };
 }]);

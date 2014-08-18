@@ -1,24 +1,31 @@
 var page_controllers = angular.module('page_controllers',
-  [ 'ui.bootstrap' ]);
+  [ 'ui.bootstrap', 'page_services' ]);
 
 
-page_controllers.controller('PhotoModalCtrl', [ '$scope', '$modal',
-  function ($scope, $modal) {
+page_controllers.controller('PhotoModalCtrl',
+  [ '$scope', '$modal', 'photos',
+  function ($scope, $modal, photos) {
 
-  $scope.open = function() {
-    var modalInstance = $modal.open({
-      templateUrl: '/js/angular/pages/templates/photo_modal.html',
-      controller: ModalInstanceCtrl,
-      size: 'lg',
+  $scope.open = function(photo) {
+    photos.get_photo(photo).success(function(photo_json) {
+      var modalInstance = $modal.open({
+        templateUrl: '/js/angular/pages/templates/photo_modal.html',
+        controller: ModalInstanceCtrl,
+        size: 'lg',
+        resolve: { photo_object: function () { return photo_json } }
+      });
     });
   };
 }]);
 
 
-var ModalInstanceCtrl = function ($scope, $modalInstance, photo) {
-  $scope.photo = photo;
+var ModalInstanceCtrl = function ($scope, $sce, $modalInstance, photo_object) {
+  $scope.photo = photo_object;
+
+  $scope.description = function() { return $sce.trustAsHtml(photo_object.description); };
 
   $scope.ok = function () {
+    console.log($scope.photo);
     $modalInstance.dismiss('cancel');
   };
 };

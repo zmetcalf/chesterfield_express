@@ -7,5 +7,6 @@
     "angular": "1.2.x",
     "angular-bootstrap": "0.x",
     "angular-route": "1.2.x",
+    "angular-sanitize": "1.2.x"
   }
 }

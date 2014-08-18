@@ -143,6 +143,9 @@ app.get('/login', login.load_login);
 app.post('/login', login.authenticate);
 app.get('/logout', login.logout);
 
+var photo_ajax = require('./controllers/photo/ajax/index');
+app.get('/photo_ajax/:id', photo_ajax.get_photo);
+
 app.use(function(err, req, res, next){
   // log it
   if (!module.parent) console.error(err.stack);
