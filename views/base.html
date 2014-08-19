@@ -42,8 +42,8 @@
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             <li {% if reqpath === '/' %}class="active"{% endif %}><a href="/">Home</a></li>
-            <li {% if reqpath === '/content/about' %}class="active"{% endif %}><a href="/content/about">About</a></li>
-            <li {% if reqpath === '/content/contact' %}class="active"{% endif %}><a href="/content/contact">Contact</a></li>
+            <li {% if reqpath === '/about' %}class="active"{% endif %}><a href="/about">About</a></li>
+            <li {% if reqpath === '/contact' %}class="active"{% endif %}><a href="/contact">Contact</a></li>
             {% if logged_in %}
               <li><a href="/dashboards">Dashboard</a></li>
               <li><a href="/logout">Logout</a></li>

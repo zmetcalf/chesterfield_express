@@ -348,4 +348,24 @@ describe('Content Authentication', function() {
       });
     });
   });
+
+  describe('Cool URLs', function() {
+    it('should get /blog', function(done) {
+      server
+      .get('/blog')
+      .expect(200, done);
+    });
+
+    it('should still 404', function(done) {
+      server
+      .get('/badblog')
+      .expect(404, done);
+    });
+
+    it('should still 404 with additional params', function(done) {
+      server
+      .get('/bad/blog')
+      .expect(404, done);
+    });
+  });
 });

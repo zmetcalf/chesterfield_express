@@ -21,7 +21,7 @@
           <td><a href="/studio/{{ studio.url_slug }}/edit">{{ studio.title }}</a></td>
           <td>{{ studio.post_date.toDateString() }}</td>
           <td>{{ users|get_author(studio._author) }}</td>
-          <td><a href="/studio/{{ studio.url_slug }}">/{{ studio.url_slug }}</a></td>
+          <td><a href="/{{ studio.url_slug }}">/{{ studio.url_slug }}</a></td>
         </tr>
         {% endfor %}
       </tbody>

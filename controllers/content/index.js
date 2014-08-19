@@ -66,7 +66,8 @@ exports.edit = function(req, res, next) {
 
 
 exports.show = function(req, res, next) {
-  res.render('show', {
+  // When using cool URLs, the template must be called more explicitly
+  res.render(__dirname + '/views/show', {
     message: res.locals.message,
     content: req.content,
   });

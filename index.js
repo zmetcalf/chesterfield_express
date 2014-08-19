@@ -146,6 +146,10 @@ app.get('/logout', login.logout);
 var photo_ajax = require('./controllers/photo/ajax/index');
 app.get('/photo_ajax/:id', photo_ajax.get_photo);
 
+// CoolURL Routes
+var cool_router = require('./lib/cool_router');
+var ctrl = app.get('/:id', cool_router);
+
 app.use(function(err, req, res, next){
   // log it
   if (!module.parent) console.error(err.stack);
