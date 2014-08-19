@@ -9,7 +9,7 @@ page_controllers.controller('PhotoModalCtrl',
   $scope.open = function(photo) {
     photos.get_photo(photo).success(function(photo_json) {
       var modalInstance = $modal.open({
-        templateUrl: '/js/angular/pages/templates/photo_modal.html',
+        templateUrl: '/static/js/angular/pages/templates/photo_modal.html',
         controller: ModalInstanceCtrl,
         size: 'lg',
         resolve: { photo_object: function () { return photo_json } }

@@ -15,7 +15,7 @@ studio_controllers.controller('PhotoSelectModalCtrl',
           }, 3);
 
         var modalInstance = $modal.open({
-          templateUrl: '/js/angular/admin/templates/photo_select_modal.html',
+          templateUrl: '/static/js/angular/admin/templates/photo_select_modal.html',
           controller: ModalInstanceCtrl,
           size: 'lg',
           resolve: {

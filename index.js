@@ -58,7 +58,7 @@ app.response.message = function(msg){
 if (!module.parent) app.use(logger('dev'));
 
 // serve static files
-app.use(express.static(__dirname + '/public'));
+app.use('/static', express.static(__dirname + '/public'));
 app.use('/media', express.static(__dirname + '/media'));
 
 // Helmet for safe headers
