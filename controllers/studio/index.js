@@ -1,5 +1,4 @@
-var model = require('./models/models'),
-    user_model = require('../user/models/models'),
+var models = require('../../models'),
     _ = require('underscore'),
     async = require('async'),
     sanitize_html = require('sanitize-html'),
@@ -16,7 +15,7 @@ exports.before = function(req, res, next) {
     var slug = req.params.studio_id;
     if (!slug) return next();
 
-    model.Studio.findOne({ 'url_slug': slug })
+    models.Studio.findOne({ 'url_slug': slug })
       .populate('_photos')
       .exec(function(err, studio) {
         req.studio = studio;
@@ -34,7 +33,7 @@ exports.before = function(req, res, next) {
 exports.list = function(req, res, next) {
   async.parallel({
     studios: function(callback) {
-      model.Studio.find({}, 'url_slug post_date title _author',
+      models.Studio.find({}, 'url_slug post_date title _author',
         function(err, studios) {
           if (err) return console.log(err);
           return callback(null,  studios);
@@ -42,7 +41,7 @@ exports.list = function(req, res, next) {
     },
 
     users: function(callback) {
-      user_model.User.find({}, 'first_name last_name _id',
+      models.User.find({}, 'first_name last_name _id',
         function(err, users) {
           if (err) return console.log(err);
           return callback(null, users);
@@ -77,7 +76,7 @@ exports.show = function(req, res, next) {
 
 
 exports.delete = function(req, res, next) {
-  model.Studio.findByIdAndRemove(req.studio._id, function(err) {
+  models.Studio.findByIdAndRemove(req.studio._id, function(err) {
     if(err) return console.log(err);
     req.session.error = 'Studio Deleted';
     res.redirect('/studios');
@@ -88,7 +87,7 @@ exports.delete = function(req, res, next) {
 exports.update = function(req, res, next) {
   studio_form().handle(req, {
     success: function(form) {
-      model.Studio.findOneAndUpdate({ url_slug: req.studio.url_slug }, {
+      models.Studio.findOneAndUpdate({ url_slug: req.studio.url_slug }, {
         title: sanitize_html(req.body.title),
         post_date: req.body.post_date,
         description: sanitize_html(req.body.description),
@@ -131,7 +130,7 @@ exports.add = function(req, res, next) {
 exports.create = function(req, res, next) {
   studio_form().handle(req, {
     success: function(form) {
-      model.Studio.create({
+      models.Studio.create({
         title: sanitize_html(req.body.title),
         post_date: req.body.post_date,
         description: sanitize_html(req.body.description),
@@ -225,7 +224,7 @@ function studio_form(studio) {
 
 function unique_slug(form, field, callback) {
   studio_id = form.data.id || '';
-  model.Studio.is_unique_slug(field.data, studio_id,
+  models.Studio.is_unique_slug(field.data, studio_id,
     function(err, is_unique) {
       if (err) return console.log(err);
       if(is_unique) {

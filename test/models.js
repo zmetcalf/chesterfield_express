@@ -1,10 +1,49 @@
 var assert = require('chai').assert,
     async = require('async'),
     mongoose = require('mongoose'),
-    db_opts = require('../../../../config/db'),
-    user_model = require('../../../../controllers/user/models/models'),
-    studio_model = require('../../../../controllers/studio/models/models'),
-    model = require('../../../../controllers/content/models/models');
+    db_opts = require('../config/db'),
+    models = require('../models');
+
+describe('Is Unique User', function() {
+
+  beforeEach(function(done) {
+
+    if(!mongoose.connection.readyState) {
+      mongoose.connect('mongodb://localhost/chest_test/', db_opts.options);
+    }
+
+    models.User.create({
+      first_name: "Foo",
+      last_name: "Bar",
+      username: 'foobar',
+      is_staff: false,
+      hash: '',
+      salt: ''
+    }, function(err, new_user) {
+      if(err) return console.log(err);
+      done();
+    });
+  });
+
+  afterEach(function() {
+    var q = models.User.remove({});
+    q.exec();
+  });
+
+  it('should return false - duplicate username', function() {
+    models.User.is_unique_user('foobar', function(err, is_unique) {
+      if(err) return console.log(err);
+      assert.isFalse(is_unique);
+    });
+  });
+
+  it('should return true', function() {
+    models.User.is_unique_user('barfoo', function(err, is_unique) {
+      if(err) return console.log(err);
+      assert.isTrue(is_unique);
+    });
+  });
+});
 
 
 describe('Is Unique Slug', function() {
@@ -15,7 +54,7 @@ describe('Is Unique Slug', function() {
       mongoose.connect('mongodb://localhost/chest_test/', db_opts.options);
     }
 
-    user_model.User.create({
+    models.User.create({
       first_name: 'Test',
       last_name: 'User',
       username: 'content_user',
@@ -28,7 +67,7 @@ describe('Is Unique Slug', function() {
       async.parallel([
         function(callback) {
 
-          model.Content.create({
+          models.Content.create({
             title: 'Title',
             summary: 'Summary',
             content: 'Content',
@@ -44,7 +83,7 @@ describe('Is Unique Slug', function() {
         },
 
         function(callback) {
-          model.Content.create({
+          models.Content.create({
             title: 'Title',
             summary: 'Summary',
             content: 'Content',
@@ -60,7 +99,7 @@ describe('Is Unique Slug', function() {
         },
 
         function(callback) {
-          studio_model.Studio.create({
+          models.Studio.create({
             title: 'Title',
             summary: 'Summary',
             content: 'Content',
@@ -83,17 +122,17 @@ describe('Is Unique Slug', function() {
   });
 
   afterEach(function() {
-    var q = model.Content.remove({});
+    var q = models.Content.remove({});
     q.exec();
-    q = user_model.User.remove({});
+    q = models.User.remove({});
     q.exec();
-    q = studio_model.Studio.remove({});
+    q = models.Studio.remove({});
     q.exec();
   });
 
   it('should return false - duplicate slug', function(done) {
-    model.Content.findOne({ 'url_slug': 'bar' }, '_id', function(err, content_id) {
-      model.Content.is_unique_slug('foo', String(content_id), function(err, is_unique) {
+    models.Content.findOne({ 'url_slug': 'bar' }, '_id', function(err, content_id) {
+      models.Content.is_unique_slug('foo', String(content_id), function(err, is_unique) {
         if(err) return console.log(err);
         assert.isFalse(is_unique);
         done();
@@ -102,8 +141,8 @@ describe('Is Unique Slug', function() {
   });
 
   it('should return false - duplicate slug - other model', function(done) {
-    model.Content.findOne({ 'url_slug': 'foobar' }, '_id', function(err, content_id) {
-      model.Content.is_unique_slug('foo', String(content_id), function(err, is_unique) {
+    models.Content.findOne({ 'url_slug': 'foobar' }, '_id', function(err, content_id) {
+      models.Content.is_unique_slug('foo', String(content_id), function(err, is_unique) {
         if(err) return console.log(err);
         assert.isFalse(is_unique);
         done();
@@ -112,8 +151,8 @@ describe('Is Unique Slug', function() {
   });
 
   it('should return true - same content', function(done) {
-    model.Content.findOne({ 'url_slug': 'foo' }, '_id', function(err, content) {
-      model.Content.is_unique_slug('foo', String(content._id), function(err, is_unique) {
+    models.Content.findOne({ 'url_slug': 'foo' }, '_id', function(err, content) {
+      models.Content.is_unique_slug('foo', String(content._id), function(err, is_unique) {
         if(err) return console.log(err);
         assert.isTrue(is_unique);
         done();
@@ -122,7 +161,7 @@ describe('Is Unique Slug', function() {
   });
 
   it('should return true - new content', function(done) {
-    model.Content.is_unique_slug('goo', '', function(err, is_unique) {
+    models.Content.is_unique_slug('goo', '', function(err, is_unique) {
       if(err) return console.log(err);
       assert.isTrue(is_unique);
       done();

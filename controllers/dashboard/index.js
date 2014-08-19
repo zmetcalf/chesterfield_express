@@ -1,6 +1,5 @@
 var async = require('async'),
-    content_model = require('../content/models/models'),
-    user_model = require('../user/models/models');
+    models = require('../../models');
 
 exports.before = function(req, res, next) {
   if (req.session.user && req.session.user.is_staff) {
@@ -14,7 +13,7 @@ exports.before = function(req, res, next) {
 exports.list = function(req, res, next) {
   async.parallel({
     contents: function(callback) {
-      content_model.Content.find({}, 'url_slug post_date title _author',
+      models.Content.find({}, 'url_slug post_date title _author',
         function(err, contents) {
           if (err) return console.log(err);
           return callback(null,  contents);
@@ -22,7 +21,7 @@ exports.list = function(req, res, next) {
     },
 
     users: function(callback) {
-      user_model.User.find({}, 'first_name last_name username is_staff _id',
+      models.User.find({}, 'first_name last_name username is_staff _id',
         function(err, users) {
           if (err) return console.log(err);
           return callback(null, users);

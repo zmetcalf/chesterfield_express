@@ -1,4 +1,4 @@
-var model = require('../user/models/models'),
+var models = require('../../models'),
     hash = require('pwd').hash,
     forms = require('forms'),
     fields = forms.fields,
@@ -30,7 +30,7 @@ exports.update = function(req, res, next) {
       hash(req.body.password, function(err, _salt, _hash) {
         if (err) return console.log(err);
 
-        model.User.findOneAndUpdate({ username: req.session.user.username },
+        models.User.findOneAndUpdate({ username: req.session.user.username },
         {
           salt: _salt,
           hash: _hash

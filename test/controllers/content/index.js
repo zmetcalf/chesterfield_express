@@ -4,8 +4,7 @@ var assert = require('chai').assert,
     hash = require('pwd').hash,
     mongoose = require('mongoose'),
     cheerio = require('cheerio'),
-    user_model = require('../../../controllers/user/models/models'),
-    model = require('../../../controllers/content/models/models'),
+    models = require('../../../models'),
     db_opts = require('../../../config/db');
 
 if(!mongoose.connection.readyState) {
@@ -34,7 +33,7 @@ describe('Content Authentication', function() {
       },
 
       function(callback) {
-        user_model.User.create({
+        models.User.create({
           first_name: 'Test',
           last_name: 'User',
           username: 'auth_user',
@@ -49,7 +48,7 @@ describe('Content Authentication', function() {
       },
 
       function(callback) {
-        model.Content.create({
+        models.Content.create({
           title: 'Title',
           summary: 'Summary',
           content: 'Content',
@@ -69,10 +68,10 @@ describe('Content Authentication', function() {
   afterEach(function(done) {
     async.series([
       function(callback) {
-        model.Content.remove({}).exec(callback);
+        models.Content.remove({}).exec(callback);
       },
       function(callback) {
-        user_model.User.remove({}).exec(callback);
+        models.User.remove({}).exec(callback);
       }
     ], function (err, results) { done(); });
   });

@@ -5,9 +5,7 @@ var assert = require('chai').assert,
     request = require('supertest'),
     mongoose = require('mongoose'),
     db_opts = require('../../../config/db'),
-    user_model = require('../../../controllers/user/models/models'),
-    photo_model = require('../../../controllers/photo/models/models'),
-    model = require('../../../controllers/studio/models/models');
+    models = require('../../../models');
 
 if(!mongoose.connection.readyState) {
   mongoose.connect('mongodb://localhost/chest_test/', db_opts.options);
@@ -38,7 +36,7 @@ describe('Studio Photo Selector', function() {
       },
 
       function(callback) {
-        user_model.User.create({
+        models.User.create({
           first_name: 'Test',
           last_name: 'User',
           username: 'auth_user',
@@ -53,7 +51,7 @@ describe('Studio Photo Selector', function() {
       },
 
       function(callback) {
-        photo_model.Photo.create({
+        models.Photo.create({
           title: 'Photo One',
           description: 'Desc1',
           published: true,
@@ -67,7 +65,7 @@ describe('Studio Photo Selector', function() {
       },
 
       function(callback) {
-        photo_model.Photo.create({
+        models.Photo.create({
           title: 'Photo Two',
           description: 'Desc2',
           published: true,
@@ -81,7 +79,7 @@ describe('Studio Photo Selector', function() {
       },
 
       function(callback) {
-        model.Studio.create({
+        models.Studio.create({
           title: 'Title',
           description: 'Description',
           published: true,
@@ -123,13 +121,13 @@ describe('Studio Photo Selector', function() {
   afterEach(function(done) {
     async.series([
       function(callback) {
-        model.Studio.remove({}).exec(callback);
+        models.Studio.remove({}).exec(callback);
       },
       function(callback) {
-        user_model.User.remove({}).exec(callback);
+        models.User.remove({}).exec(callback);
       },
       function(callback) {
-        photo_model.Photo.remove({}).exec(callback);
+        models.Photo.remove({}).exec(callback);
       },
       function(callback) {
         server
@@ -143,7 +141,7 @@ describe('Studio Photo Selector', function() {
   });
 
   it('should return assigned photos', function(done) {
-    model.Studio.findOne({ url_slug: 'studio' }, function(err, studio) {
+    models.Studio.findOne({ url_slug: 'studio' }, function(err, studio) {
       if (err) return console.log(err);
       server
         .get('/studio_photo_selector/' + studio._id.toString())

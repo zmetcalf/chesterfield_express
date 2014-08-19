@@ -1,5 +1,4 @@
-var model = require('./models/models'),
-    user_model = require('../user/models/models'),
+var models = require('../../models'),
     _ = require('underscore'),
     async = require('async'),
     sanitize_html = require('sanitize-html'),
@@ -16,7 +15,7 @@ exports.before = function(req, res, next) {
     var slug = req.params.content_id;
     if (!slug) return next();
 
-    model.Content.findOne({ 'url_slug': slug }, function(err, content) {
+    models.Content.findOne({ 'url_slug': slug }, function(err, content) {
       req.content = content;
       if (err) return console.log(err);
       if (!content) return next('route');
@@ -32,7 +31,7 @@ exports.before = function(req, res, next) {
 exports.list = function(req, res, next) {
   async.parallel({
     contents: function(callback) {
-      model.Content.find({}, 'url_slug post_date title _author',
+      models.Content.find({}, 'url_slug post_date title _author',
         function(err, contents) {
           if (err) return console.log(err);
           return callback(null,  contents);
@@ -40,7 +39,7 @@ exports.list = function(req, res, next) {
     },
 
     users: function(callback) {
-      user_model.User.find({}, 'first_name last_name _id',
+      models.User.find({}, 'first_name last_name _id',
         function(err, users) {
           if (err) return console.log(err);
           return callback(null, users);
@@ -75,7 +74,7 @@ exports.show = function(req, res, next) {
 
 
 exports.delete = function(req, res, next) {
-  model.Content.findByIdAndRemove(req.content._id, function(err) {
+  models.Content.findByIdAndRemove(req.content._id, function(err) {
     if(err) return console.log(err);
     req.session.error = 'Content Deleted';
     res.redirect('/contents');
@@ -86,7 +85,7 @@ exports.delete = function(req, res, next) {
 exports.update = function(req, res, next) {
   content_form().handle(req, {
     success: function(form) {
-      model.Content.findOneAndUpdate({ url_slug: req.content.url_slug }, {
+      models.Content.findOneAndUpdate({ url_slug: req.content.url_slug }, {
         title: sanitize_html(req.body.title),
         post_date: req.body.post_date,
         summary: sanitize_html(req.body.summary),
@@ -130,7 +129,7 @@ exports.add = function(req, res, next) {
 exports.create = function(req, res, next) {
   content_form().handle(req, {
     success: function(form) {
-      model.Content.create({
+      models.Content.create({
         title: sanitize_html(req.body.title),
         post_date: req.body.post_date,
         summary: sanitize_html(req.body.summary),
@@ -232,7 +231,7 @@ function content_form(content) {
 
 function unique_slug(form, field, callback) {
   content_id = form.data.id || '';
-  model.Content.is_unique_slug(field.data, content_id,
+  models.Content.is_unique_slug(field.data, content_id,
     function(err, is_unique) {
       if (err) return console.log(err);
       if(is_unique) {

@@ -1,7 +1,6 @@
-var model = require('./models/models'),
+var models = require('../../models'),
     async = require('async'),
     fs = require('fs'),
-    user_model = require('../user/models/models'),
     sanitize_html = require('sanitize-html'),
     forms = require('forms'),
     fields = forms.fields,
@@ -19,7 +18,7 @@ exports.before = function(req, res, next) {
     var slug = req.params.photo_id;
     if (!slug) return next();
 
-    model.Photo.findOne({ '_id': slug }, function(err, photo) {
+    models.Photo.findOne({ '_id': slug }, function(err, photo) {
       req.photo = photo;
       if (err) return console.log(err);
       if (!photo) return next('route');
@@ -35,7 +34,7 @@ exports.before = function(req, res, next) {
 exports.list = function(req, res, next) {
   async.parallel({
     photos: function(callback) {
-      model.Photo.find({}, '_id post_date title _author studios',
+      models.Photo.find({}, '_id post_date title _author studios',
         function(err, photos) {
           if (err) return console.log(err);
           return callback(null,  photos);
@@ -43,7 +42,7 @@ exports.list = function(req, res, next) {
     },
 
     users: function(callback) {
-      user_model.User.find({}, 'first_name last_name _id',
+      models.User.find({}, 'first_name last_name _id',
         function(err, users) {
           if (err) return console.log(err);
           return callback(null, users);
@@ -81,7 +80,7 @@ exports.show = function(req, res, next) {
 
 exports.delete = function(req, res, next) {
   // TODO Add removal of file from file system
-  model.Photo.findByIdAndRemove(req.photo._id, function(err) {
+  models.Photo.findByIdAndRemove(req.photo._id, function(err) {
     if(err) return console.log(err);
     req.session.error = 'Photo Deleted';
     res.redirect('/photos');
@@ -92,7 +91,7 @@ exports.delete = function(req, res, next) {
 exports.update = function(req, res, next) {
   photo_form().handle(req, {
     success: function(form) {
-      model.Photo.findOneAndUpdate({ _id: req.photo._id }, {
+      models.Photo.findOneAndUpdate({ _id: req.photo._id }, {
         title: sanitize_html(req.body.title),
         post_date: req.body.post_date,
         description: sanitize_html(req.body.description),
@@ -151,7 +150,7 @@ exports.create = function(req, res, next) {
   req.busboy.on('finish', function() {
     photo_form().handle(req, {
       success: function(form) {
-        model.Photo.create({
+        models.Photo.create({
           title: sanitize_html(req.body.title),
           post_date: req.body.post_date,
           description: sanitize_html(req.body.description),

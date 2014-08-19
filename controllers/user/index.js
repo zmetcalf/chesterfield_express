@@ -1,4 +1,4 @@
-var model = require('./models/models'),
+var models = require('../../models'),
     gen_password = require('../../lib/utils').gen_password,
     hash = require('pwd').hash,
     _ = require('underscore'),
@@ -14,7 +14,7 @@ exports.before = function(req, res, next) {
     var username = req.params.user_id;
     if (!username) return next();
 
-    model.User.findOne({ 'username': username },
+    models.User.findOne({ 'username': username },
       'first_name last_name is_staff username',
       function(err, user) {
         req.user = user;
@@ -29,7 +29,7 @@ exports.before = function(req, res, next) {
 }
 
 exports.list = function(req, res, next) {
-  model.User.find({}, 'first_name last_name is_staff username',
+  models.User.find({}, 'first_name last_name is_staff username',
     function(err, users) {
       if (err) return console.log(err);
       res.render('list', {
@@ -55,7 +55,7 @@ exports.show = function(req, res, next) {
 }
 
 exports.delete = function(req, res, next) {
-  model.User.findByIdAndRemove(req.user._id, function(err) {
+  models.User.findByIdAndRemove(req.user._id, function(err) {
     if(err) return console.log(err);
     req.session.error = 'User Deleted';
     res.redirect('/users');
@@ -72,7 +72,7 @@ exports.update = function(req, res, next) {
         }
       });
 
-      model.User.findOneAndUpdate({ username: req.user.username }, update_fields,
+      models.User.findOneAndUpdate({ username: req.user.username }, update_fields,
         function(err, user) {
           if (err) return console.log(err);
           req.session.success = 'User updated';
@@ -109,7 +109,7 @@ exports.create = function(req, res, next) {
         hash(password, function(err, _salt, _hash) {
           if (err) return console.log(err);
 
-          model.User.create({
+          models.User.create({
             first_name: sanitize_html(req.body.first_name),
             last_name: sanitize_html(req.body.last_name),
             username: sanitize_html(req.body.username),
@@ -200,7 +200,7 @@ var create_form = forms.create({
 });
 
 function unique_user(form, field, callback) {
-  model.User.is_unique_user(field.data, function(err, is_unique) {
+  models.User.is_unique_user(field.data, function(err, is_unique) {
     if (err) return console.log(err);
     if(is_unique) {
       return callback();

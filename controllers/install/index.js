@@ -1,4 +1,4 @@
-var User = require('../user/models/models').User;
+var User = require('../../models').User;
 
 exports.before = function(req, res, next) {
   next();
