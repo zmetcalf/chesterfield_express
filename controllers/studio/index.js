@@ -1,5 +1,4 @@
 var models = require('../../models'),
-    _ = require('underscore'),
     async = require('async'),
     sanitize_html = require('sanitize-html'),
     forms = require('forms'),

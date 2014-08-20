@@ -16,12 +16,11 @@ var user_schema = mongoose.Schema({
 user_schema.statics.is_unique_user = function(username, callback) {
   this.find({}, 'username', function(err, users) {
     if (err) return console.log(err);
-
-    if(_.find(users, function(user) { return username == user.username; })) {
-      return callback(null, false);
-    } else {
-      return callback(null, true);
-    }
+    async.detect(users, function(user, callback) {
+      callback(username == user.username);
+    }, function(user) {
+      return callback(null, !user);
+    });
   });
 }
 
@@ -68,15 +67,11 @@ cms_schema.statics.is_unique_slug = function(slug, content_id, callback) {
   ],
 
   function(err, results) {
-    var fltrd = _.filter(_.flatten(results), function(result) {
-      return slug == result.url_slug && content_id != result._id;
+    async.detect(_.flatten(results), function(result, callback) {
+      callback(slug == result.url_slug && content_id != result._id);
+    }, function(result) {
+      return callback(null, !result);
     });
-
-    if (fltrd.length) {
-      return callback(null, false);
-    } else {
-      return callback(null, true);
-    }
   });
 }
 
@@ -114,15 +109,11 @@ studio_schema.statics.is_unique_slug = function(slug, studio_id, callback) {
   ],
 
   function(err, results) {
-    var fltrd = _.filter(_.flatten(results), function(result) {
-      return slug == result.url_slug && studio_id != result._id;
+    async.detect(_.flatten(results), function(result, callback) {
+      callback(slug == result.url_slug && studio_id != result._id);
+    }, function(result) {
+      return callback(null, !result);
     });
-
-    if (fltrd.length) {
-      return callback(null, false);
-    } else {
-      return callback(null, true);
-    }
   });
 }
 

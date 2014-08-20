@@ -1,7 +1,7 @@
 var models = require('../../models'),
     gen_password = require('../../lib/utils').gen_password,
     hash = require('pwd').hash,
-    _ = require('underscore'),
+    async = require('async'),
     sanitize_html = require('sanitize-html'),
     forms = require('forms'),
     fields = forms.fields,
@@ -66,18 +66,21 @@ exports.update = function(req, res, next) {
   update_form(req.user).handle(req, {
     success: function(form) {
       var update_fields = {};
-      _.each(['first_name', 'last_name', 'is_staff'], function(field) {
+      async.each([ 'first_name', 'last_name', 'is_staff' ], function(field, callback) {
         if(req.body[field]) {
           update_fields[field] = sanitize_html(req.body[field]);
         }
-      });
-
-      models.User.findOneAndUpdate({ username: req.user.username }, update_fields,
-        function(err, user) {
-          if (err) return console.log(err);
-          req.session.success = 'User updated';
-          res.redirect('/user/' + req.user.username);
-      });
+        callback();
+      }, function(err) {
+        if (err) return console.log(err);
+        models.User.findOneAndUpdate({ username: req.user.username }, update_fields,
+          function(err, user) {
+            if (err) return console.log(err);
+            req.session.success = 'User updated';
+            res.redirect('/user/' + req.user.username);
+          });
+        }
+      )
     },
 
     error: function(form) {

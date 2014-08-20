@@ -30,17 +30,19 @@ describe('Is Unique User', function() {
     q.exec();
   });
 
-  it('should return false - duplicate username', function() {
+  it('should return false - duplicate username', function(done) {
     models.User.is_unique_user('foobar', function(err, is_unique) {
       if(err) return console.log(err);
       assert.isFalse(is_unique);
+      done();
     });
   });
 
-  it('should return true', function() {
+  it('should return true', function(done) {
     models.User.is_unique_user('barfoo', function(err, is_unique) {
       if(err) return console.log(err);
       assert.isTrue(is_unique);
+      done();
     });
   });
 });
