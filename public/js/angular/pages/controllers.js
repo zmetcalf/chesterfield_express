@@ -25,7 +25,6 @@ var ModalInstanceCtrl = function ($scope, $sce, $modalInstance, photo_object) {
   $scope.description = function() { return $sce.trustAsHtml(photo_object.description); };
 
   $scope.ok = function () {
-    console.log($scope.photo);
     $modalInstance.dismiss('cancel');
   };
 };
