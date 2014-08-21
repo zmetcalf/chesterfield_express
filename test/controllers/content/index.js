@@ -3,7 +3,6 @@ var assert = require('chai').assert,
     request = require('supertest'),
     hash = require('pwd').hash,
     mongoose = require('mongoose'),
-    cheerio = require('cheerio'),
     models = require('../../../models'),
     db_opts = require('../../../config/db');
 
@@ -112,8 +111,7 @@ describe('Content Authentication', function() {
             .get('/login')
             .end(function(err, res) {
               if(err) console.log(err);
-              var $ = cheerio.load(res.text);
-              csrf = $('input[name="_csrf"]').val();
+              csrf = unescape(/XSRF-TOKEN=(.*?);/.exec(res.headers['set-cookie'])[1])
               callback(null);
           });
         },
@@ -142,8 +140,7 @@ describe('Content Authentication', function() {
             .get('/login')
             .end(function(err, res) {
               if(err) console.log(err);
-              var $ = cheerio.load(res.text);
-              csrf = $('input[name="_csrf"]').val();
+              csrf = unescape(/XSRF-TOKEN=(.*?);/.exec(res.headers['set-cookie'])[1])
               callback(null);
           });
         },
@@ -172,8 +169,7 @@ describe('Content Authentication', function() {
             .get('/login')
             .end(function(err, res) {
               if(err) console.log(err);
-              var $ = cheerio.load(res.text);
-              csrf = $('input[name="_csrf"]').val();
+              csrf = unescape(/XSRF-TOKEN=(.*?);/.exec(res.headers['set-cookie'])[1])
               callback(null);
           });
         },
@@ -204,8 +200,7 @@ describe('Content Authentication', function() {
             .get('/login')
             .end(function(err, res) {
               if(err) console.log(err);
-              var $ = cheerio.load(res.text);
-              csrf = $('input[name="_csrf"]').val();
+              csrf = unescape(/XSRF-TOKEN=(.*?);/.exec(res.headers['set-cookie'])[1])
               callback(null);
           });
         },
@@ -267,8 +262,7 @@ describe('Content Authentication', function() {
             .get('/content/blog/edit')
             .end(function(err, res) {
               if(err) console.log(err);
-              var $ = cheerio.load(res.text);
-              csrf = $('input[name="_csrf"]').val();
+              csrf = unescape(/XSRF-TOKEN=(.*?);/.exec(res.headers['set-cookie'])[1])
               callback(null);
           });
         },
@@ -296,8 +290,7 @@ describe('Content Authentication', function() {
             .get('/content/blog/edit')
             .end(function(err, res) {
               if(err) console.log(err);
-              var $ = cheerio.load(res.text);
-              csrf = $('input[name="_csrf"]').val();
+              csrf = unescape(/XSRF-TOKEN=(.*?);/.exec(res.headers['set-cookie'])[1])
               callback(null);
           });
         },
@@ -325,8 +318,7 @@ describe('Content Authentication', function() {
             .get('/content/blog/edit')
             .end(function(err, res) {
               if(err) console.log(err);
-              var $ = cheerio.load(res.text);
-              csrf = $('input[name="_csrf"]').val();
+              csrf = unescape(/XSRF-TOKEN=(.*?);/.exec(res.headers['set-cookie'])[1])
               callback(null);
           });
         },

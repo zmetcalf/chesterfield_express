@@ -1,7 +1,6 @@
 var assert = require('chai').assert,
     async = require('async'),
     hash = require('pwd').hash,
-    cheerio = require('cheerio'),
     request = require('supertest'),
     mongoose = require('mongoose'),
     db_opts = require('../../../config/db'),
@@ -99,8 +98,7 @@ describe('Studio Photo Selector', function() {
           .get('/login')
           .end(function(err, res) {
             if(err) console.log(err);
-            var $ = cheerio.load(res.text);
-            csrf = $('input[name="_csrf"]').val();
+            csrf = unescape(/XSRF-TOKEN=(.*?);/.exec(res.headers['set-cookie'])[1])
             callback(null);
         });
       },
