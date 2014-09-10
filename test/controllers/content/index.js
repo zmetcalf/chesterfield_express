@@ -339,6 +339,41 @@ describe('Content Authentication', function() {
         done(err);
       });
     });
+
+    it('should not edit with erroneous boolean', function(done) {
+      // Confirming that mongoose validates before updating
+      async.series([
+        function(callback) {
+          server
+            .get('/content/blog/edit')
+            .end(function(err, res) {
+              if(err) console.log(err);
+              csrf = unescape(/XSRF-TOKEN=(.*?);/.exec(res.headers['set-cookie'])[1])
+              callback(null);
+          });
+        },
+        function(callback) {
+          server
+          .put('/content/blog')
+          .set('Content-Type', 'application/x-www-form-urlencoded')
+          .send({ title: 'tiTLE', published: 'tiTLE', _csrf: csrf })
+          .expect(200, /Title/)
+          .end(function(err, res) {
+            if(err) console.log(err);
+            callback(null);
+          });
+        }
+      ],
+      function(err, results) {
+        models.Content.findOne({ url_slug: 'blog' }, 'published title',
+          function(err, content) {
+            if(err) return console.log(err);
+            assert.equal(content.title, 'Title');
+            assert.isTrue(content.published);
+            done(err);
+        });
+      });
+    });
   });
 
   describe('Cool URLs', function() {
