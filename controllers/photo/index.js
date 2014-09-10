@@ -9,6 +9,7 @@ var models = require('../../models'),
     path = require('path'),
     fs = require('fs'),
     busboy = require('connect-busboy'),
+    qt = require('quickthumb'),
     bootstrap_field = require('../../lib/forms').bootstrap_field;
 
 
@@ -150,17 +151,41 @@ exports.create = function(req, res, next) {
   req.busboy.on('finish', function() {
     photo_form().handle(req, {
       success: function(form) {
-        models.Photo.create({
-          title: sanitize_html(req.body.title),
-          post_date: req.body.post_date,
-          description: sanitize_html(req.body.description),
-          published: req.body.published,
-          _author: req.session.user._id,
-          path: path.basename(req.image.path),
-        }, function(err, photo) {
-          if (err) return console.log(err);
-          req.session.success = 'Photo Created';
-          res.redirect('/photo/' + photo._id.toString() + '/edit');
+        async.waterfall([
+          function(callback) {
+            qt.convert({
+              src: req.image.path,
+              dst: path.dirname(req.image.path) + '/thumbnails/' + path.basename(req.image.path),
+              width: 269,
+              height: 204
+            }, function(err, thumbpath) {
+              if(err) return callback(err);
+              callback(null);
+            });
+          },
+
+          function(callback) {
+            models.Photo.create({
+              title: sanitize_html(req.body.title),
+              post_date: req.body.post_date,
+              description: sanitize_html(req.body.description),
+              published: req.body.published,
+              _author: req.session.user._id,
+              path: path.basename(req.image.path),
+            }, function(err, photo) {
+              if (err) return callback(err);
+              callback(null, photo);
+            });
+          },
+        ],
+
+        function(err, result) {
+          if (err) {
+            req.session.error = 'Photo Not Created';
+          } else {
+            req.session.success = 'Photo Created';
+          }
+          res.redirect('/photo/' + result._id.toString() + '/edit');
         });
       },
 
