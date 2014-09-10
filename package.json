@@ -20,7 +20,8 @@
     "bower": "1.x",
     "async": "0.x",
     "sanitize-html": "1.x",
-    "connect-busboy": "0.x"
+    "connect-busboy": "0.x",
+    "quickthumb": "0.x"
   },
 
   "devDependencies": {
