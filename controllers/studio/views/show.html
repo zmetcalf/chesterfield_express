@@ -11,7 +11,7 @@
     {% endif %}
       <div class="col-md-3" ng-click="open('{{ photo._id.toString() }}')">
         <p>{{ photo.title }}</p>
-        <img src="/media/{{ photo.path }}" class="img-thumbnail"
+        <img src="/media/thumbnails/{{ photo.path }}" class="img-thumbnail"
              alt="{{ photo.title }}">
       </div>
     {% if loop.index0 % 3 == 2 or loop.last %}
